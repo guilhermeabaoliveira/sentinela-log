@@ -2,9 +2,7 @@
 
 ## Assistência no desenvolvimento
 
-Até esta etapa, houve assistência de IA na organização documental, na consolidação do escopo e na elaboração de propostas técnicas. A equipe é responsável pela revisão, compreensão, validação e apresentação do trabalho.
-
-Ainda não há implementação funcional ou resultado de teste da aplicação.
+A assistência de IA abrange organização documental, consolidação do escopo e elaboração de propostas técnicas. A equipe é responsável pela revisão, compreensão, validação e apresentação do trabalho.
 
 ## Registros da entrega
 

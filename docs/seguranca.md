@@ -1,6 +1,6 @@
 # Segurança e limitações
 
-O SentinelaLog é uma aplicação didática com dados fictícios. As propriedades abaixo fazem parte do escopo e ainda precisam ser demonstradas pela versão funcional.
+Privacidade, rastreabilidade e limites de detecção do monitor de acessos. O uso do SentinelaLog é restrito a dados fictícios.
 
 ## Privacidade da matrícula
 
@@ -12,7 +12,7 @@ Eventos registrados não podem ser editados pelo menu. Essa restrição não tor
 
 ## Classificação explicada
 
-Cada classificação deve ser acompanhada dos motivos que a produziram. Os critérios definitivos e suas justificativas serão descritos no [manual](manual.md#classificação-de-risco). Uma classificação normal não comprova legitimidade; indica apenas ausência dos sinais avaliados pela política adotada.
+Cada classificação deve ser acompanhada dos motivos que a produziram. Consulte a seção de [classificação de risco](manual.md#classificação-de-risco) no manual. Uma classificação normal não comprova legitimidade; indica apenas ausência dos sinais avaliados pela política adotada.
 
 ## Origens e compartilhamento
 
@@ -34,4 +34,4 @@ O sistema pode deixar de identificar:
 
 ## Dados e integração
 
-Usar exclusivamente dados fictícios. O módulo de IA deve seguir a interface fornecida pela disciplina. Suas limitações serão documentadas a partir do comportamento efetivamente disponível.
+A integração de IA utiliza o módulo fornecido pela disciplina. A interface e as condições de uso estão descritas em [integração de IA](integracao_ia.md).

@@ -1,6 +1,6 @@
 # Escopo da aplicação
 
-**Disponibilidade:** funcionalidades ainda não implementadas.
+Requisitos funcionais e técnicos do monitor de acessos.
 
 ## Usuários
 
@@ -36,7 +36,7 @@ O escopo inclui uma funcionalidade extra, ainda não definida, e a [integração
 
 Python pelo terminal, organização em funções, tratamento de exceções e legibilidade. Bibliotecas expressamente admitidas: os, datetime e random. Outras dependências exigem consulta aos professores.
 
-Usar somente dados fictícios. O manual deve explicar uso, restrições, critérios de classificação e justificativas de segurança.
+Usar somente dados fictícios. A documentação de uso abrange restrições, critérios de classificação e justificativas de segurança.
 
 ## Base acadêmica
 

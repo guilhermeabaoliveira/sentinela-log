@@ -1,6 +1,6 @@
 # Manual do usuário
 
-**Disponibilidade:** a aplicação ainda não possui versão executável. Este manual apresenta o uso previsto no escopo; não representa uma demonstração funcional.
+Referência das operações de cadastro, registro de acessos, consultas e relatórios do SentinelaLog.
 
 ## Finalidade
 
@@ -8,7 +8,7 @@ Registrar acessos fictícios a um laboratório e consultar sua análise de risco
 
 ## Operações
 
-| Operação | Dados envolvidos | Resultado previsto |
+| Operação | Dados envolvidos | Finalidade |
 | --- | --- | --- |
 | Cadastrar usuário | Nome, matrícula, perfil, horário permitido e observações | Cadastro disponível para consulta |
 | Consultar usuários | Usuário selecionado ou listagem | Informações com matrícula parcial |
@@ -18,8 +18,6 @@ Registrar acessos fictícios a um laboratório e consultar sua análise de risco
 | Consultar acessos | Histórico registrado | Eventos sem edição posterior |
 | Consultar auditoria | Histórico de operações | Operação, usuário afetado e data/hora |
 | Gerar relatório | Histórico de acessos | Totais, falhas, horários e indicadores de risco |
-
-Os comandos de execução e as opções reais do menu serão documentados com a versão funcional.
 
 ## Campos e interpretação
 
@@ -34,19 +32,17 @@ Os comandos de execução e as opções reais do menu serão documentados com a 
 
 ## Classificação de risco
 
-A classificação deve considerar os critérios adotados pela equipe e apresentar seus motivos. A política definitiva, as categorias, os limites de horário e as justificativas de segurança ainda não foram definidos. Não há política implementada nesta versão documental.
+A classificação reúne uma categoria de risco e os motivos associados ao acesso. A política de classificação, incluindo categorias e limites de horário, está em definição.
 
-Um aviso de origem bloqueada é obrigatório. A categoria atribuída ao evento depende da política adotada. A identificação de máquina compartilhada indica usuários distintos naquela origem, sem comprovar autoria física de uma ação.
+Origens presentes na lista de bloqueadas exigem um aviso. A categoria atribuída ao evento depende da política de classificação. A identificação de máquina compartilhada indica usuários distintos naquela origem, sem comprovar autoria física de uma ação.
 
 ## Persistência e falhas
 
-Cadastros, acessos e auditoria devem permanecer disponíveis entre execuções. Entradas inválidas e falhas de arquivo precisam ser informadas de forma compreensível. A aplicação não deve anunciar gravação bem-sucedida quando ela não ocorreu.
-
-O formato de entrada e a localização dos arquivos acompanharão a versão executável.
+A persistência abrange cadastros, acessos e auditoria entre execuções. Mensagens de erro devem identificar entradas inválidas e falhas de leitura ou gravação. A confirmação de uma operação depende da gravação correspondente.
 
 ## Restrições
 
-Utilizar somente dados fictícios. Mascaramento de matrícula não cifra arquivos e a ausência de edição no menu não impede alterações externas no disco. Consulte [segurança](seguranca.md).
+O uso é restrito a dados fictícios. Mascaramento de matrícula não cifra arquivos e a ausência de edição no menu não impede alterações externas no disco. Consulte [segurança](seguranca.md).
 
 ## Perguntas em linguagem natural
 
