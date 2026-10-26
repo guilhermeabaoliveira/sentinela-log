@@ -20,3 +20,22 @@ def mostrar_menu():
 def dados_usuario():
     return [ler("Nome fictício"), ler("Perfil"), ler("Início HH:MM"),
             ler("Fim HH:MM"), ler("Observações")]
+
+
+def tratar_usuario(opcao, estado):
+    if opcao == "1":
+        matricula = ler("Matrícula fictícia")
+        valores = dados_usuario()
+        usuarios.cadastrar(estado, matricula, *valores)
+        return "CADASTRO", matricula
+    if opcao == "2":
+        for usuario in usuarios.ativos(estado):
+            print(usuario["nome"], usuarios.mascarar(usuario["matricula"]),
+                  usuario["perfil"], usuario["inicio"], usuario["fim"], usuario["observacoes"])
+        return "CONSULTA_USUARIOS", "-"
+    matricula = ler("Matrícula fictícia")
+    if opcao == "3":
+        usuarios.editar(estado, matricula, *dados_usuario())
+        return "EDICAO", matricula
+    usuarios.excluir(estado, matricula)
+    return "EXCLUSAO", matricula
