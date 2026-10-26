@@ -27,6 +27,19 @@ O sistema reúne cadastros de usuários, eventos de acesso e auditoria para resp
 
 O escopo inclui persistência entre execuções e uma funcionalidade adicional, ainda não definida. Consulte a [descrição completa](docs/escopo.md).
 
+## Estrutura
+
+| Arquivo | Responsabilidade |
+| --- | --- |
+| main.py | Interface de terminal e integração |
+| usuarios.py | Cadastro e consulta de usuários |
+| acessos.py | Registro e consulta de acessos |
+| risco.py | Classificação e motivos dos alertas |
+| armazenamento.py | Persistência e auditoria |
+| relatorios.py | Resumos e indicadores de segurança |
+| dados/ | Arquivos de dados fictícios |
+| testes/ | Verificação dos comportamentos da aplicação |
+
 ## Ambiente
 
 - Python com entrada e saída pelo terminal.
