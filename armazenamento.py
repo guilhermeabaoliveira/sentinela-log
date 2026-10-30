@@ -13,7 +13,7 @@ COLECOES = {"U": "usuarios", "A": "acessos", "L": "auditoria"}
 def vazio():
     return{"usuarios": [], "acessos": [], "auditoria":[]}
 
-def campo_seguro(valor)
+def campo_seguro(valor):
     if not isinstance(valor, str):
         raise ValueError("Campos devem ser textos.")
     if "|" in valor or "\n" in valor or "\n" in valor:
