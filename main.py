@@ -39,3 +39,21 @@ def tratar_usuario(opcao, estado):
         return "EDICAO", matricula
     usuarios.excluir(estado, matricula)
     return "EXCLUSAO", matricula
+
+
+def tratar_acesso(opcao, estado, pasta):
+    if opcao == "6":
+        for linha in acessos.linhas_consulta(estado):
+            print(linha)
+        return "CONSULTA_ACESSOS", "-", None
+    matricula = ler("Matrícula fictícia")
+    usuario = usuarios.buscar(estado, matricula)
+    if usuario is None:
+        raise ValueError("Usuário ativo não encontrado.")
+    momento = ler("Data e hora AAAA-MM-DD HH:MM")
+    maquina = ler("Máquina fictícia")
+    resultado = ler("Resultado: sucesso ou falha")
+    bloqueadas = risco.ler_bloqueadas(os.path.join(pasta, "bloqueadas.txt"))
+    registro = acessos.registrar(estado, usuario, momento, maquina, resultado, bloqueadas)
+    # A classificação só será anunciada após a gravação persistente.
+    return "REGISTRO_ACESSO", matricula, registro
