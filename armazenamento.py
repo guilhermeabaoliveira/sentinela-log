@@ -43,3 +43,30 @@ def carregar(pasta):
     validar_estado(estado)
     return estado
     
+    
+def validar_estado(estado):
+    import usuarios
+    import acessos
+    matriculas = []
+    for usuario in estado["usuarios"]:
+        usuarios.validar(usuario["nome"], usuario["matricula"], usuario["perfil"],
+                         usuario["inicio"], usuario["fim"], usuario["observacoes"])
+        if usuario["matricula"] in matriculas or usuario["ativo"] not in ["0", "1"]:
+            raise ValueError("Usuário duplicado ou estado inválido no arquivo.")
+        matriculas.append(usuario["matricula"])
+    for tipo in ["A", "L"]:
+        identificadores = []
+        for registro in estado[COLECOES[tipo]]:
+            if not registro["id"].isdigit() or int(registro["id"]) < 1 or registro["id"] in identificadores:
+                raise ValueError("Identificador inválido ou duplicado.")
+            identificadores.append(registro["id"])
+            datetime.strptime(registro["momento"], "%Y-%m-%d %H:%M")
+            if tipo == "A":
+                acessos.validar_entrada(registro["momento"], registro["maquina"], registro["resultado"])
+                if registro["matricula"] not in matriculas or registro["risco"] not in ["normal", "suspeito", "critico"]:
+                    raise ValueError("Referência ou risco inválido no acesso.")
+    for tipo in CAMPOS:
+        for registro in estado[COLECOES[tipo]]:
+            for campo in CAMPOS[tipo]:
+                campo_seguro(registro[campo])
+    
