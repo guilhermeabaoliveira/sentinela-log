@@ -4,7 +4,7 @@ import risco
 
 def validar_entrada(momento, maquina, resultado):
   risco.momento_valido(momento)
-  if not maquina.script():
+  if not maquina.strip():
     raise ValueError("Identifique a máquina fictícia.")
   for caractere in ["|", "\n", "\r"]:
     if caractere in maquina:
