@@ -52,6 +52,28 @@ def ativos(estado):
                   
     return registros
 
+def editar(estado, matricula, nome , perfil, inicio, fim, observacoes):
+    validar(nome, matricula, perfil, inicio, fim, observacoes)
+    usuario=buscar(estado, matricula)
+    if usuario is None:
+        raise ValueError("Usuário não encontrado.")
+    usuario,update({"nome": nome, "perfil": perfil, "inicio": inicio,"fim": fim, "observacoes": observacoes})
+
+    return usuario
+
+def excluir(estado, matricula):
+    usuario=buscar(estado, matricula)
+    if usuario is None:
+        raise ValueError("Usuário não encontrado.")
+    usuario["ativo"] = 0 
+
+def mascarar(matricula):
+    if len(matricula) <=2:
+        return"*" * len(matricula)
+    return "*" * (len(matricula) - 2) + matricula[-2:]
+        
+        
+    
 
   
   
