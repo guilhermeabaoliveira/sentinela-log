@@ -39,24 +39,24 @@ def resumir(estado):
         return resumo
 
 def linhas_relatorio(estado):
- import usuarios
- resumo = resumir(estado)
- identidades = []
- for matricula in resumo["mais_falhas"]:
-    usuario = usuarios.buscar(estado, matricula, False)
-    if usuario is None:
-        raise ValueError("Usuário do histórico não encontrado.")
-    situacao = "ativo"
-    if usuario["ativo"] == "0":
-        situacao = "excluído"
-    mascara = usuarios.mascarar(matricula)
-    identidades.append(f'{usuario["nome"]} ({mascara}; {situacao})')
-    return [f'Total de acessos: {resumo["acessos"]}',
-        f'Total de falhas: {resumo["falhas"]}',
-        'Usuários com mais falhas: ' + (", ".join(identidades) or "nenhum"),
-        'Horas com mais movimento: ' + (", ".join(resumo["pico"]) or "nenhuma"),
-        f'Suspeitos: {resumo["suspeitos"]}',
-        f'Críticos: {resumo["criticos"]}']
+    import usuarios
+    resumo = resumir(estado)
+    identidades = []
+    for matricula in resumo["mais_falhas"]:
+        usuario = usuarios.buscar(estado, matricula, False)
+        if usuario is None:
+            raise ValueError("Usuário do histórico não encontrado.")
+        situacao = "ativo"
+        if usuario["ativo"] == "0":
+            situacao = "excluído"
+        mascara = usuarios.mascarar(matricula)
+        identidades.append(f'{usuario["nome"]} ({mascara}; {situacao})')
+        return [f'Total de acessos: {resumo["acessos"]}',
+            f'Total de falhas: {resumo["falhas"]}',
+            'Usuários com mais falhas: ' + (", ".join(identidades) or "nenhum"),
+            'Horas com mais movimento: ' + (", ".join(resumo["pico"]) or "nenhuma"),
+            f'Suspeitos: {resumo["suspeitos"]}',
+            f'Críticos: {resumo["criticos"]}']
 
 def apresentar(estado):
     for linha in linhas_relatorio(estado):
