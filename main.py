@@ -57,3 +57,47 @@ def tratar_acesso(opcao, estado, pasta):
     registro = acessos.registrar(estado, usuario, momento, maquina, resultado, bloqueadas)
     # A classificação só será anunciada após a gravação persistente.
     return "REGISTRO_ACESSO", matricula, registro
+
+
+def executar(pasta=PASTA):
+    while True:
+        mostrar_menu()
+        try:
+            opcao = ler("Opção")
+            if opcao == "0":
+                return
+            estado = armazenamento.carregar(pasta)
+            registro = None
+            revelacao = None
+            if opcao in ["1", "2", "3", "4"]:
+                operacao, afetado = tratar_usuario(opcao, estado)
+            elif opcao in ["5", "6"]:
+                operacao, afetado, registro = tratar_acesso(opcao, estado, pasta)
+            elif opcao == "7":
+                for log in estado["auditoria"]:
+                    print(log["momento"], log["operacao"], usuarios.mascarar(log["afetado"]))
+                operacao, afetado = "CONSULTA_AUDITORIA", "-"
+            elif opcao == "8":
+                afetado = ler("Matrícula fictícia")
+                revelacao = usuarios.revelar(estado, afetado)
+                operacao = "REVELACAO_MATRICULA"
+            elif opcao == "10":
+                print("Consulta ao agente indisponível.")
+                continue
+            else:
+                print("Opção indisponível neste marco.")
+                continue
+            armazenamento.salvar(pasta, estado, operacao, afetado)
+            if registro is not None:
+                print(registro["risco"], registro["motivos"])
+            if revelacao is not None:
+                print("Matrícula:", revelacao)
+            print("Operação gravada com auditoria.")
+        except (OSError, ValueError, UnicodeError) as erro:
+            print("Operação não concluída:", erro)
+        except (EOFError, KeyboardInterrupt):
+            print("\nEncerrado.")
+            return
+
+if __name__ == "__main__":
+    executar()
