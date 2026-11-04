@@ -40,3 +40,25 @@ def consultar(estado, matricula=""):
             registros.append(dict(acesso))
     # Cópias impedem que a consulta altere o registro em memória.
     return registros
+
+
+
+def linhas_consulta(estado, matricula=""):
+    import usuarios
+    linhas = []
+    for acesso in consultar(estado, matricula):
+        mascara = usuarios.mascarar(acesso["matricula"])
+        linhas.append(f'{acesso["id"]} {mascara} {acesso["momento"]} '
+                      f'{acesso["maquina"]} {acesso["resultado"]} '
+                      f'{acesso["risco"]}: {acesso["motivos"]}')
+    return linhas
+
+def conferir_consulta_independente():
+    registro = {"id": "1", "matricula": "1234"}
+    estado = {"acessos": [registro]}
+    copia = consultar(estado)
+    copia[0]["id"] = "999"
+    assert estado["acessos"][0]["id"] == "1"
+    assert consultar(estado, "0000") == []
+    return True
+
