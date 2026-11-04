@@ -69,4 +69,39 @@ def validar_estado(estado):
         for registro in estado[COLECOES[tipo]]:
             for campo in CAMPOS[tipo]:
                 campo_seguro(registro[campo])
+
+    
+    def salvar(pasta, estado, operacao, afetado):
+        campo_seguro(operacao)
+        campo_seguro(afetado)
+        os.makedirs(pasta, exist_ok=True)
+        carregar(pasta)  # Arquivo corrompido existente nunca é substituído silenciosamente.
+        copia = vazio()
+        for chave in estado:
+            for item in estado[chave]:
+                copia[chave].append(dict(item))
+        maior = 0
+        for log in copia["auditoria"]:
+            maior = max(maior, int(log["id"]))
+        copia["auditoria"].append({"id": str(maior + 1),
+            "momento": datetime.now().strftime("%Y-%m-%d %H:%M"),
+            "operacao": operacao, "afetado": afetado})
+        validar_estado(copia)
+        caminho = os.path.join(pasta, "estado.txt")
+        temporario = caminho + ".tmp"
+        try:
+            with open(temporario, "x", encoding="utf-8", newline="\n") as arquivo:
+                for tipo in CAMPOS:
+                    for registro in copia[COLECOES[tipo]]:
+                        valores = [tipo]
+                        for campo in CAMPOS[tipo]:
+                            valores.append(registro[campo])
+                        arquivo.write("|".join(valores) + "\n")
+            os.replace(temporario, caminho)
+        except OSError:
+            # Temporário fica preservado para diagnóstico; nenhuma mensagem de sucesso.
+            raise
+        return copia
+
+
     
