@@ -44,3 +44,22 @@ def classificar(usuario, momento, maquina, resultado, bloqueadas):
     if motivos:
         return "suspeito", "; ".join(motivos)
     return "normal", "Dentro das regras locais"
+
+def exemplos_fronteira():
+ usuario = {"inicio": "07:00", "fim": "18:00"}
+ dentro = classificar(usuario, "2026-10-26 10:00", "MAQ-A", "sucesso", [])
+ fora = classificar(usuario, "2026-10-26 03:00", "MAQ-A", "sucesso", [])
+ falha = classificar(usuario, "2026-10-26 03:00", "MAQ-A", "falha", [])
+ bloqueio = classificar(usuario, "2026-10-26 10:00", "MAQ-X", "sucesso", ["MAQ-X"])
+ assert dentro[0] == "normal"
+ assert fora[0] == "suspeito"
+ assert falha[0] == "critico"
+ assert bloqueio[0] == "critico"
+ return [dentro, fora, falha, bloqueio]
+
+def descricao_regras():
+ return ["Uma falha OU acesso fora do horário: suspeito.",
+         "Falha E acesso fora do horário: crítico.",
+         "Origem bloqueada: crítico e aviso, sem impedir gravação.",
+         "Nenhuma condição: normal.",
+         "Limites de início e fim inclusivos; janela noturna permitida."]
