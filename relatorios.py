@@ -62,3 +62,4 @@ def apresentar(estado):
     for linha in linhas_relatorio(estado):
         print(linha)
     return resumir(estado)
+    
