@@ -9,7 +9,7 @@ def validar(nome, matricula, perfil, inicio, fim, observacoes):
             raise ValueError("Texto inválido no cadastro")
 
     if not nome.strip() or not matricula.isdigit():
-        raise ValueError("Informe nome e matrícula numérica.")
+        raise ValueError("Informe nome e matrícula numérica fictícios.")
 
     if perfil not in PERFIS:
         raise ValueError("Perfil deve ser estudante, professor ou administrador.")
@@ -69,10 +69,32 @@ def excluir(estado, matricula):
 
 def mascarar(matricula):
     if len(matricula) <=2:
-        return"*" * len(matricula)
+        return "*" * len(matricula)
     return "*" * (len(matricula) - 2) + matricula[-2:]
         
+def revelar(estado, matricula):
+    usuario=buscar(estado, matricula, False)
+    
+    if usuario is None:
+        raise ValueError("Matrícula não encontrada.")
+    return usuario["matricula"]
         
+def testar_mascara():
+        assert mascarar("123456") == "****56"
+        assert mascarar("12") == "**"
+        assert mascarar("1") == "*"
+        assert mascarar("") == ""
+        return True
+
+def nome_historico(estado, matricula):
+    usuario = buscar(estado, matricula, False)
+    if usuario is None:
+        return "Usuário não encontrado"
+    return usuario["nome"]
+        
+
+    
+    
     
 
   
