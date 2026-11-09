@@ -63,3 +63,21 @@ def descricao_regras():
          "Origem bloqueada: crítico e aviso, sem impedir gravação.",
          "Nenhuma condição: normal.",
          "Limites de início e fim inclusivos; janela noturna permitida."]
+
+def testar_janela_noturna():
+    inicio = "22:00"
+    fim = "06:00"
+    assert not fora_horario("2026-10-26 22:00", inicio, fim)
+    assert not fora_horario("2026-10-27 06:00", inicio, fim)
+    assert not fora_horario("2026-10-26 23:59", inicio, fim)
+    assert fora_horario("2026-10-26 12:00", inicio, fim)
+    return True
+
+def testar_motivos_combinados():
+    usuario = {"inicio": "07:00", "fim": "18:00"}
+    nivel, motivos = classificar(usuario, "2026-10-26 03:00", "MAQ-X", "falha", ["MAQ-X"])
+    assert nivel == "critico"
+    assert "Falha" in motivos
+    assert "Fora do horário" in motivos
+    assert "Origem bloqueada" in motivos
+    return True
