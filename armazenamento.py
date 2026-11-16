@@ -104,4 +104,82 @@ def validar_estado(estado):
         return copia
 
 
+    def consultar_auditoria(estado, operacao=""):
+        resultado = []
+        for registro in estado["auditoria"]:
+            if not operacao or registro["operacao"] == operacao:
+                resultado.append(dict(registro))
+        return resultado
+    
+    def conferir_serializacao(estado):
+        validar_estado(estado)
+        linhas = []
+        for tipo in CAMPOS:
+            for registro in estado[COLECOES[tipo]]:
+                valores = [tipo]
+                for campo in CAMPOS[tipo]:
+                    valores.append(campo_seguro(registro[campo]))
+                linhas.append("|".join(valores))
+        return linhas
+
+
+    def testar_reabertura(pasta):
+        import usuarios
+        estado = vazio()
+        usuarios.cadastrar(estado, "9001", "Pessoa Fictícia", "professor", "08:00", "17:00", "")
+        salvo = salvar(pasta, estado, "CADASTRO", "9001")
+        lido = carregar(pasta)
+        assert lido == salvo
+        assert len(lido["auditoria"]) == 1
+        assert lido["auditoria"][0]["operacao"] == "CADASTRO"
+        retorno = consultar_auditoria(lido)
+        retorno[0]["operacao"] = "ALTERADO"
+        assert lido["auditoria"][0]["operacao"] == "CADASTRO"
+        return True
+
+    def caminho_dados(pasta):
+        return os.path.join(pasta, "estado.txt")
+
+    import armazenamento
+    import usuarios
+    import os
+    
+    def testar_persistencia(pasta):
+        assert armazenamento.testar_reabertura(pasta)
+        estado = armazenamento.carregar(pasta)
+        usuarios.excluir(estado, "9001")
+        armazenamento.salvar(pasta, estado, "EXCLUSAO", "9001")
+        lido = armazenamento.carregar(pasta)
+        assert usuarios.buscar(lido, "9001") is None
+        assert usuarios.buscar(lido, "9001", False) is not None
+        assert len(lido["auditoria"]) == 2
+        assert lido["auditoria"][-1]["operacao"] == "EXCLUSAO"
+        assert armazenamento.conferir_serializacao(lido)
+        return True
+
+    def testar_corrupcao(pasta):
+    os.makedirs(pasta, exist_ok=True)
+    caminho = armazenamento.caminho_dados(pasta)
+    with open(caminho, "w", encoding="utf-8") as arquivo:
+        arquivo.write("CONTEUDO_CORROMPIDO\n")
+    for operacao in ["ler", "salvar"]:
+        try:
+            if operacao == "ler":
+                armazenamento.carregar(pasta)
+            else:
+                armazenamento.salvar(pasta, armazenamento.vazio(), "TESTE", "-")
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("Arquivo corrompido foi aceito.")
+    with open(caminho, encoding="utf-8") as arquivo:
+        assert arquivo.read() == "CONTEUDO_CORROMPIDO\n"
+    return True
+
+        
+
+
+        
+
+
     
