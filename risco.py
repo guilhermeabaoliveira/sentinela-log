@@ -81,3 +81,20 @@ def testar_motivos_combinados():
     assert "Fora do horário" in motivos
     assert "Origem bloqueada" in motivos
     return True
+
+def conferir_lista(caminho):
+    maquinas = ler_bloqueadas(caminho)
+    conferidas = []
+    for maquina in maquinas:
+        if "|" in maquina or "\r" in maquina or "\n" in maquina:
+            raise ValueError("Origem inválida no arquivo de bloqueadas.")
+        if maquina not in conferidas:
+            conferidas.append(maquina)
+    return conferidas
+
+def testar_limites_diurnos():
+    assert not fora_horario("2026-10-26 07:00", "07:00", "18:00")
+    assert not fora_horario("2026-10-26 18:00", "07:00", "18:00")
+    assert fora_horario("2026-10-26 06:59", "07:00", "18:00")
+    assert fora_horario("2026-10-26 18:01", "07:00", "18:00")
+    return True
