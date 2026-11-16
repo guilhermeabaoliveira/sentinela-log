@@ -98,3 +98,20 @@ def testar_limites_diurnos():
     assert fora_horario("2026-10-26 06:59", "07:00", "18:00")
     assert fora_horario("2026-10-26 18:01", "07:00", "18:00")
     return True
+
+def testar_datas_invalidas():
+    for texto in ["2026-02-30 10:00", "2026-10-26 25:00", "26/10/2026 10:00"]:
+        try:
+            momento_valido(texto)
+        except ValueError:
+            continue
+        raise AssertionError("Data inválida aceita.")
+    return True
+
+def testar_origem_bloqueada():
+    usuario = {"inicio": "07:00", "fim": "18:00"}
+    nivel, motivos = classificar(usuario, "2026-10-26 10:00", "MAQ-X", "sucesso", ["MAQ-X"])
+    assert nivel == "critico"
+    assert "bloqueada" in motivos
+    assert "Falha" not in motivos
+    return True
