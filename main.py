@@ -110,5 +110,15 @@ def executar(pasta=PASTA):
             print("\nEncerrado.")
             return
 
+def abertura():
+    print("Somente dados fictícios. Execução local por um processo.")
+    print("Matrícula mascarada não é criptografia ou autenticação.")
+    for linha in risco.descricao_regras():
+        print(linha)
+    print("Dados e auditoria ficam juntos no arquivo dados/estado.txt.")
+    print("Origens bloqueadas são lidas de dados/bloqueadas.txt.")
+    print("As regras são uma proposta didática, não exigência literal dos professores.")
+
 if __name__ == "__main__":
+    abertura()
     executar()
