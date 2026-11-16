@@ -81,6 +81,17 @@ def executar(pasta=PASTA):
                 afetado = ler("Matrícula fictícia")
                 revelacao = usuarios.revelar(estado, afetado)
                 operacao = "REVELACAO_MATRICULA"
+            elif opcao == "9":
+                relatorios.apresentar(estado)
+                relatorios.mostrar_grafico(estado)
+                print("Máquinas compartilhadas:")
+                linhas = acessos.linhas_compartilhadas(estado)
+                if not linhas:
+                    print("Nenhuma máquina compartilhada.")
+                for linha in linhas:
+                    print(linha)
+                print("Compartilhamento não identifica autoria de uma ação.")
+                operacao, afetado = "RELATORIO_SEGURANCA", "-"
             elif opcao == "10":
                 print("Consulta ao agente indisponível.")
                 continue
