@@ -158,23 +158,23 @@ def validar_estado(estado):
         return True
 
     def testar_corrupcao(pasta):
-    os.makedirs(pasta, exist_ok=True)
-    caminho = armazenamento.caminho_dados(pasta)
-    with open(caminho, "w", encoding="utf-8") as arquivo:
-        arquivo.write("CONTEUDO_CORROMPIDO\n")
-    for operacao in ["ler", "salvar"]:
-        try:
-            if operacao == "ler":
-                armazenamento.carregar(pasta)
+        os.makedirs(pasta, exist_ok=True)
+        caminho = armazenamento.caminho_dados(pasta)
+        with open(caminho, "w", encoding="utf-8") as arquivo:
+            arquivo.write("CONTEUDO_CORROMPIDO\n")
+        for operacao in ["ler", "salvar"]:
+            try:
+                if operacao == "ler":
+                    armazenamento.carregar(pasta)
+                else:
+                    armazenamento.salvar(pasta, armazenamento.vazio(), "TESTE", "-")
+            except ValueError:
+                pass
             else:
-                armazenamento.salvar(pasta, armazenamento.vazio(), "TESTE", "-")
-        except ValueError:
-            pass
-        else:
-            raise AssertionError("Arquivo corrompido foi aceito.")
-    with open(caminho, encoding="utf-8") as arquivo:
-        assert arquivo.read() == "CONTEUDO_CORROMPIDO\n"
-    return True
+                raise AssertionError("Arquivo corrompido foi aceito.")
+        with open(caminho, encoding="utf-8") as arquivo:
+            assert arquivo.read() == "CONTEUDO_CORROMPIDO\n"
+        return True
 
         
 
