@@ -16,3 +16,19 @@ def testar_riscos():
         assert nivel == esperado
         assert motivo
     return True
+
+def testar_arquivo_bloqueadas(caminho):
+    try:
+        risco.ler_bloqueadas(caminho)
+    except FileNotFoundError:
+        pass
+    else:
+        raise AssertionError("O teste exige caminho novo.")
+    with open(caminho, "w", encoding="utf-8") as arquivo:
+        arquivo.write("MAQ-X\n\nMAQ-X\nMAQ-Y\n")
+    assert risco.conferir_lista(caminho) == ["MAQ-X", "MAQ-Y"]
+    usuario = {"inicio": "07:00", "fim": "18:00"}
+    nivel, motivo = risco.classificar(usuario, "2026-10-26 10:00", "MAQ-Y", "sucesso", risco.conferir_lista(caminho))
+    assert nivel == "critico"
+    assert "bloqueada" in motivo
+    return True
