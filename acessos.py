@@ -80,3 +80,28 @@ def testar_identificadores():
     assert estado["acessos"][0]["id"] == "1"
     return True
 
+
+def compartilhadas(estado):
+    por_origem = {}
+    for acesso in estado["acessos"]:
+        maquina = acesso["maquina"]
+        matricula = acesso["matricula"]
+        if maquina not in por_origem:
+            por_origem[maquina] = []
+        if matricula not in por_origem[maquina]:
+            por_origem[maquina].append(matricula)
+    resultado = {}
+    for maquina in por_origem:
+        if len(por_origem[maquina]) > 1:
+            resultado[maquina] = por_origem[maquina]
+    return resultado
+
+def linhas_compartilhadas(estado):
+    import usuarios
+    linhas = []
+    for maquina, matriculas in compartilhadas(estado).items():
+        identidades = []
+        for item in matriculas:
+            identidades.append(usuarios.identidade_publica(estado, item))
+        linhas.append(maquina + ": " + ", ".join(identidades))
+    return linhas
