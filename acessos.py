@@ -122,3 +122,18 @@ def testar_compartilhamento():
     copia[0]["matricula"] = "999"
     assert estado["acessos"][0]["matricula"] == "111"
     return True
+import acessos
+import usuarios
+
+def testar_historico():
+    estado = {"usuarios": [], "acessos": []}
+    pessoa = usuarios.cadastrar(estado, "1234", "Pessoa Fictícia", "estudante", "07:00", "18:00", "")
+    registro = acessos.registrar(estado, pessoa, "2026-10-26 03:00", "A", "sucesso", [])
+    assert registro["risco"] == "suspeito"
+    usuarios.editar(estado, "1234", "Pessoa Fictícia", "estudante", "00:00", "23:59", "")
+    usuarios.excluir(estado, "1234")
+    assert acessos.consultar(estado)[0]["risco"] == "suspeito"
+    assert len(acessos.consultar(estado)) == 1
+    assert "1234" not in acessos.linhas_consulta(estado)[0]
+    assert acessos.testar_identificadores()
+    return True
