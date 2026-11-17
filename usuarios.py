@@ -92,7 +92,78 @@ def nome_historico(estado, matricula):
         return "Usuário não encontrado"
     return usuario["nome"]
         
+def identidade_publica(estado, matricula):
+    usuario = buscar(estado, matricula, False)
+    if usuario is None:
+        raise ValueError("Usuário não encontrado.")
+    situacao = "ativo"
+    if usuario["ativo"] == "0":
+        situacao = "excluído"
+    return f'{usuario["nome"]} ({mascarar(matricula)}; {situacao})'
 
+def testar_usuario_excluido():
+    estado = {"usuarios": []}
+    cadastrar(estado, "1001", "Pessoa Fictícia", "estudante", "07:00", "18:00", "")
+    excluir(estado, "1001")
+    assert buscar(estado, "1001") is None 
+    assert buscar(estado, "1001", False)["ativo"] == "0"
+    assert "excluído" in identidade_publica(estado, "1001")
+    assert revelar(estado, "1001") == "1001"
+    return True
+
+def testar_edicao_historica():
+    estado = {"usuarios": [], "acessos": [{"matricula": "1001", "risco": "normal"}]}
+    cadastrar(estado, "1001", "Pessoa Fictícia", "estudante", "07:00", "18:00", "")
+    editar(estado, "1001", "Pessoa Atualizada", "professor", "08:00", "19:00", "Texto")
+    usuario = buscar(estado, "1001")
+    assert usuario["matricula"] == "1001"
+    assert usuario["nome"} == "Pessoa Atualizada"
+    assert usuario["perfil"] == "professor"
+    assert estado["acessos"] == [{"matricula": "1001", "risco": "normal"}]
+    excluir(estado, "1001")
+    try:
+        cadastrar(estado, "1001", "Outra Pessoa", "estudante", "07:00", "18:00", "")
+    except ValueError: 
+        return True
+    raise AssertionError("A matrícula histórica foi reutilizada.")
+
+import usuarios
+
+def testar_cadastros():
+    estado = {"usuarios": []}
+    usuarios.cadastrar(estado, "1234", "Pessoa Fictícia", "estudante", "07:00", "18:00", "")
+    casos = [["1234", "Outra", "estudante", "07:00", "18:00", ""],
+             ["9999", "", "estudante", "07:00", "18:00", ""],
+             ["9999", " ", "inexistente", "07:00", "18:00", ""],
+             ["9999", "Outra", "estudante", "07:00", "18:00", "A|B"]]
+    for valores in casos:
+        try:
+            usuarios.cadastrar(estado, *valores)
+        except ValueError:
+            continue
+        raise AssertionError("Cadastro inválido aceito.")
+    assert len(estado["usuarios"]) == 1
+    return True
+
+
+def testar_identidade():
+    assert usuarios.testar_mascara()
+    assert usuarios.testar_usuario_excluido()
+    assert usuarios.testar_edicao_historica()
+    estado = {"usuarios": []}
+    usuarios.cadastrar(estado, "4321", "Pessoa Fictícia", "administrador", "22:00", "06:00", "")
+    publico = usuarios.identidade_publica(estado, "4321")
+    assert "4321" not in publico
+    assert "**21" in publico
+    usuarios.excluir(estado, "4321")
+    assert usuarios.ativos(estado) == []
+    assert usuarios.revelar(estado, "4321") == "4321"
+    assert usuarios.nome_historico(estado, "4321") == "Pessoa Fictícia"
+    return True
+
+        
+
+    
     
     
     
