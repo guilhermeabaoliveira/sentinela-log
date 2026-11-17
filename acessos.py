@@ -105,3 +105,20 @@ def linhas_compartilhadas(estado):
             identidades.append(usuarios.identidade_publica(estado, item))
         linhas.append(maquina + ": " + ", ".join(identidades))
     return linhas
+
+
+def testar_compartilhamento():
+    estado = {"acessos": [
+        {"maquina": "A", "matricula": "111"},
+        {"maquina": "A", "matricula": "111"},
+        {"maquina": "B", "matricula": "222"}
+    ]}
+    assert compartilhadas(estado) == {}
+    estado["acessos"].append({"maquina": "A", "matricula": "222"})
+    assert compartilhadas(estado) == {"A": ["111", "222"]}
+    assert len(por_maquina(estado, "A")) == 3
+    assert len(consultar(estado, "111")) == 2
+    copia = por_maquina(estado, "A")
+    copia[0]["matricula"] = "999"
+    assert estado["acessos"][0]["matricula"] == "111"
+    return True
