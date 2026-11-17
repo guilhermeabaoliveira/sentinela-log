@@ -62,3 +62,21 @@ def conferir_consulta_independente():
     assert consultar(estado, "0000") == []
     return True
 
+def por_maquina(estado, maquina):
+    registros = []
+    for acesso in estado["acessos"]:
+        if acesso["maquina"] == maquina:
+            registros.append(dict(acesso))
+    return registros
+
+def testar_identificadores():
+    assert proximo_id([]) == "1"
+    assert proximo_id([{"id": "4"}, {"id": "2"}]) == "5"
+    estado = {"acessos": [{"id": "1", "maquina": "A"},
+                          {"id": "2", "maquina": "B"}]}
+    resultado = por_maquina(estado, "A")
+    assert len(resultado) == 1
+    resultado[0]["id"] = "99"
+    assert estado["acessos"][0]["id"] == "1"
+    return True
+
