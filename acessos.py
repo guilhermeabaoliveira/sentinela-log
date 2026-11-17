@@ -137,3 +137,19 @@ def testar_historico():
     assert "1234" not in acessos.linhas_consulta(estado)[0]
     assert acessos.testar_identificadores()
     return True
+
+
+def testar_consultas():
+    assert acessos.conferir_consulta_independente()
+    assert acessos.testar_compartilhamento()
+    estado = {"usuarios": [], "acessos": []}
+    for matricula in ["1001", "1002"]:
+        pessoa = usuarios.cadastrar(estado, matricula, "Pessoa " + matricula[-1], "estudante", "07:00", "18:00", "")
+        acessos.registrar(estado, pessoa, "2026-10-26 10:00", "A", "sucesso", [])
+    usuarios.excluir(estado, "1001")
+    linhas = acessos.linhas_compartilhadas(estado)
+    assert len(linhas) == 1
+    assert "excluído" in linhas[0]
+    assert "1001" not in linhas[0]
+    assert "1002" not in linhas[0]
+    return True
