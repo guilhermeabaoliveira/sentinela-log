@@ -117,7 +117,7 @@ def testar_edicao_historica():
     editar(estado, "1001", "Pessoa Atualizada", "professor", "08:00", "19:00", "Texto")
     usuario = buscar(estado, "1001")
     assert usuario["matricula"] == "1001"
-    assert usuario["nome"} == "Pessoa Atualizada"
+    assert usuario["nome"] == "Pessoa Atualizada"
     assert usuario["perfil"] == "professor"
     assert estado["acessos"] == [{"matricula": "1001", "risco": "normal"}]
     excluir(estado, "1001")

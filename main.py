@@ -4,6 +4,10 @@ import usuarios
 import acessos
 import risco
 import relatorios
+from interface import executar
+
+if __name__ == "__main__":
+    executar()
 
 PASTA = os.path.join(os.path.dirname(__file__), "dados")
 
