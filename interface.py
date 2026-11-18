@@ -339,8 +339,8 @@ class SentinelaLogApp:
             return
 
         opcoes = [
-            f"{u['matricula']} | {u['nome']}"
-            for u in ativos
+            f"{indice}. {u['nome']} | {usuarios.mascarar(u['matricula'])}"
+            for indice, u in enumerate(ativos, 1)
         ]
 
         campos = [
@@ -355,7 +355,7 @@ class SentinelaLogApp:
         ]
 
         def salvar(v):
-            matricula = v["usuario"].split(" | ", 1)[0]
+            matricula = ativos[opcoes.index(v["usuario"])]["matricula"]
             usuario = usuarios.buscar(self.estado, matricula)
             bloqueadas = risco.ler_bloqueadas(
                 os.path.join(PASTA, "bloqueadas.txt")

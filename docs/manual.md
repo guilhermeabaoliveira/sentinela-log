@@ -1,53 +1,122 @@
 # Manual do usuário
 
-Referência das operações de cadastro, registro de acessos, consultas e relatórios do SentinelaLog.
+O SentinelaLog registra acessos fictícios de um laboratório, aplica regras de risco e permite consultar o histórico. O aplicativo funciona no computador; somente o assistente de IA utiliza um serviço externo.
 
-## Iniciar
+## 1. Instalação e execução
 
-Na pasta do programa, execute `python -m pip install -r requirements.txt` e depois `python main.py` para abrir a interface gráfica. O modo terminal utiliza `python main.py --terminal`.
+1. Tenha Python 3.11 ou superior instalado. Para a janela gráfica, o ambiente Python precisa incluir Tkinter.
+2. Baixe o ZIP do repositório e extraia o conteúdo, ou use uma cópia clonada.
+3. Abra um terminal na pasta que contém `main.py`.
+4. Execute:
 
-## Finalidade
+```sh
+python -m pip install -r requirements.txt
+python main.py
+```
 
-Registrar acessos fictícios a um laboratório e consultar sua análise de risco. O sistema permite organizar usuários, eventos e auditoria em uma interface gráfica e no modo terminal.
+No Windows, se o comando disponível for `py`, use-o no lugar de `python`. O programa pode ser iniciado pelo terminal sem abrir a interface gráfica:
 
-## Operações
+```sh
+python main.py --terminal
+```
 
-| Operação | Dados envolvidos | Finalidade |
+A dependência `groq` habilita o assistente. Cadastros, acessos, relatórios e auditoria local funcionam sem chave e sem internet. O arquivo `.env.example` informa o nome da variável da chave; ele não configura a aplicação automaticamente.
+
+## 2. Navegação e aparência
+
+O painel inicial apresenta totais e atalhos. O menu lateral mantém as mesmas operações numeradas do terminal. A página selecionada fica marcada; botões e itens do menu recebem realce ao passar o mouse ou obter foco pelo teclado.
+
+A interface inicia em tema escuro. O botão **Tema claro**, no canto superior direito, alterna a aparência. Depois da troca, **Tema escuro** permite retornar. A escolha vale durante a sessão e não apaga campos ou a conversa. Use **0 Sair** para encerrar, confirmando a saída.
+
+## 3. Usuários
+
+Em **1 Cadastrar**, informe:
+
+| Campo | Formato e significado |
+| --- | --- |
+| Matrícula fictícia | Identificador numérico estável do cadastro, digitado pelo operador |
+| Nome fictício | Nome de exemplo, sem informações reais |
+| Perfil | estudante, professor ou administrador |
+| Horários inicial e final | `HH:MM`, por exemplo `07:00` e `18:00`; precisam ser diferentes |
+| Observações | Texto complementar opcional |
+
+A matrícula não é um número sorteado a cada login. Não se pode reutilizar a matrícula de um cadastro excluído. Os campos não aceitam o separador `|` nem quebras de linha.
+
+**2 Usuários** lista os cadastros ativos com matrícula parcialmente mascarada. **3 Editar** altera os dados do cadastro. **4 Excluir** desativa o usuário, preservando o histórico. Nessas operações, informe a matrícula quando solicitada.
+
+**8 Revelar matrícula** é a operação específica para exibir o identificador completo e registrar essa revelação na auditoria. O perfil cadastrado descreve o usuário fictício; não representa um login ou um controle de permissões da aplicação.
+
+## 4. Registrar e consultar acessos
+
+Em **5 Registrar acesso**, selecione o usuário ativo na interface gráfica; no terminal, informe a matrícula fictícia. Depois, informe:
+
+- Data e hora no formato `AAAA-MM-DD HH:MM`.
+- Nome da máquina fictícia.
+- Resultado `sucesso` ou `falha`.
+
+A seleção exibe o nome e a matrícula mascarada; o sistema mantém a associação com o cadastro correto. Após a gravação, a mensagem informa a classificação e os motivos. **6 Acessos** mostra o histórico. Os eventos não podem ser editados pelo menu.
+
+## 5. Classificação de risco
+
+| Condição | Classificação | Justificativa |
 | --- | --- | --- |
-| Cadastrar usuário | Nome, matrícula, perfil, horário permitido e observações | Cadastro disponível para consulta |
-| Consultar usuários | Usuário selecionado ou listagem | Informações com matrícula parcial |
-| Editar ou excluir usuário | Identificação de um cadastro existente | Atualização do cadastro e registro de operação relevante |
-| Revelar matrícula | Usuário selecionado | Valor completo e auditoria da revelação |
-| Registrar acesso | Usuário, data/hora, máquina e sucesso/falha | Evento, classificação e motivos |
-| Consultar acessos | Histórico registrado | Eventos sem edição posterior |
-| Consultar auditoria | Histórico de operações | Operação, usuário afetado e data/hora |
-| Gerar relatório | Histórico de acessos | Totais, falhas, horários e indicadores de risco |
+| Sucesso dentro do horário, em origem não bloqueada | Normal | Nenhum sinal das regras adotadas foi encontrado |
+| Falha ou horário fora da faixa permitida | Suspeito | Há falha de acesso ou uso em horário inesperado |
+| Falha combinada com horário fora da faixa | Crítico | Dois sinais de risco ocorrem no mesmo evento |
+| Origem presente em `dados/bloqueadas.txt` | Crítico, com aviso | A origem consta na lista de bloqueios |
 
-## Campos e interpretação
+Os limites inicial e final do horário são inclusivos; faixas que atravessam a meia-noite são aceitas. Uma origem bloqueada gera aviso e classificação crítica: o evento continua sendo registrado. O sistema não bloqueia fisicamente uma máquina nem impede acessos no sistema operacional.
 
-- **Matrícula:** identificação do usuário. Sua exibição completa ocorre por operação específica.
-- **Perfil:** estudante, professor ou administrador.
-- **Horário permitido:** faixa de acesso associada ao cadastro.
-- **Data/hora do acesso:** instante do evento registrado.
-- **Máquina de origem:** equipamento informado no acesso.
-- **Sucesso/falha:** resultado do acesso, distinto de sua classificação de risco.
-- **Classificação e motivos:** conclusão da análise e condições que a justificam.
-- **Data/hora da auditoria:** instante da operação realizada na aplicação.
+## 6. Auditoria e relatório
 
-## Classificação de risco
+**7 Auditoria** apresenta operações, usuário afetado e data/hora. Na interface gráfica, **Consultas de IA** abre o registro das perguntas ao assistente. No terminal, a mesma opção 7 inclui os dois históricos.
 
-A classificação reúne uma categoria de risco e os motivos associados ao acesso. Um acesso sem sinais é normal. Falha ou horário fora da faixa permitida gera suspeito. Falha combinada com horário fora da faixa gera crítico. Uma origem da lista de bloqueadas também gera crítico e aviso. Os limites do horário são inclusivos e faixas noturnas são aceitas. Esses sinais priorizam a revisão dos registros.
+**9 Segurança** reúne totais de acessos e falhas, usuários com mais falhas, horários de maior movimento, quantidades por risco, gráfico textual e máquinas associadas a usuários distintos. Compartilhamento indica associação nos registros, não comprova quem estava fisicamente utilizando uma máquina.
 
-Origens presentes na lista de bloqueadas exigem um aviso. A identificação de máquina compartilhada indica usuários distintos naquela origem, sem comprovar autoria física de uma ação.
+## 7. Assistente de IA
 
-## Persistência e falhas
+1. Crie uma chave em sua própria conta na Groq. Não publique essa chave no GitHub nem a inclua no ZIP do projeto.
+2. Abra **10 Assistente IA → Configurar chave** e cole a chave no campo protegido. Ela permanece na memória da sessão e precisa ser informada novamente após fechar o programa.
+3. Tenha pelo menos um acesso registrado e digite, por exemplo, **Quantos acessos e quantas falhas foram registrados?**
+4. Revise a pergunta tratada e confirme o envio externo. Nomes e matrículas cadastrados são substituídos por identificadores como U1; os fatos não incluem observações livres nem auditoria.
+5. Aguarde a conclusão. A IA consulta fatos; não altera cadastros, acessos ou classificações.
 
-A persistência abrange cadastros, acessos e auditoria entre execuções. Mensagens de erro devem identificar entradas inválidas e falhas de leitura ou gravação. A confirmação de uma operação depende da gravação correspondente.
+**Limpar conversa** remove o histórico visível e o contexto da sessão, preservando a auditoria. No terminal, configure `GROQ_API_KEY` no ambiente antes de iniciar; o botão de configuração existe apenas na interface gráfica. Consulte [integração de IA](integracao_ia.md) para os limites e os dados enviados.
 
-## Restrições
+## 8. Exemplo de demonstração local
 
-O uso é restrito a dados fictícios. Mascaramento de matrícula não cifra arquivos e a ausência de edição no menu não impede alterações externas no disco. Consulte [segurança](seguranca.md).
+O exemplo abaixo acrescenta registros fictícios. Use uma matrícula ainda não cadastrada.
 
-## Perguntas em linguagem natural
+1. Cadastre `Pessoa Exemplo`, matrícula `900100`, perfil `estudante`, horário de `07:00` a `18:00`.
+2. Registre um acesso às `2026-11-18 10:00`, na máquina `MAQ-A`, com `sucesso`: resultado esperado **normal**.
+3. Registre outro às `2026-11-18 10:05`, na mesma máquina, com `falha`: resultado esperado **suspeito**.
+4. Registre um acesso às `2026-11-18 10:10`, na máquina `MAQ-X`, com `sucesso`: resultado esperado **crítico**, desde que `MAQ-X` permaneça no arquivo de bloqueadas fornecido.
+5. Consulte **6 Acessos**, **7 Auditoria** e **9 Segurança**. Os totais incluem também qualquer registro anterior existente.
+6. Se a chave estiver configurada e houver internet, faça uma pergunta ao assistente sobre esses registros.
+7. Feche e reabra o programa para conferir a persistência. A chave da interface precisará ser informada novamente.
 
-No terminal, defina `GROQ_API_KEY` no ambiente antes de iniciar. Na interface gráfica, use **Configurar chave**. Abra a opção **10 Assistente IA** e faça uma pergunta sobre os acessos fictícios. Revise o texto e confirme o envio externo. Consulte [integração de IA](integracao_ia.md) para os dados enviados, os limites e o registro local de consultas.
+## 9. Arquivos e cuidados de uso
+
+| Arquivo | Conteúdo |
+| --- | --- |
+| `dados/estado.txt` | Usuários, acessos e auditoria das operações |
+| `dados/bloqueadas.txt` | Uma origem bloqueada por linha |
+| `dados/consultas_ia.txt` | Operação, pergunta tratada, data/hora, resultado e modelo, separados por tabulação |
+
+O arquivo de consultas é criado no primeiro uso do assistente. Para preservar a base, faça uma cópia dos arquivos de dados com o programa fechado. Evite editar o estado manualmente e execute uma única instância por pasta de dados. Ambientes virtuais, chaves e registros locais de consultas não fazem parte da entrega do código.
+
+Mascaramento protege a exibição, não cifra o arquivo. O histórico é protegido contra edição pelo menu, mas alguém com acesso ao disco pode alterá-lo externamente. Use somente dados fictícios. Consulte [segurança e limitações](seguranca.md).
+
+## 10. Solução de problemas
+
+| Situação | Orientação |
+| --- | --- |
+| Python não encontrado | Confira a instalação e tente o comando `py` no Windows |
+| Erro ao importar Tkinter | Use uma instalação Python com Tkinter ou execute pelo terminal |
+| Dependência Groq ausente | Execute `python -m pip install -r requirements.txt` |
+| Chave ausente ou recusada | Configure uma chave válida; verifique a validade na sua conta Groq |
+| Histórico vazio | Registre um acesso antes de consultar o assistente |
+| Falha de conexão ou limite do provedor | Confira a conexão e aguarde antes de tentar novamente |
+| Arquivo inválido ou falha de gravação | Preserve os arquivos, confira permissões e restaure uma cópia válida se necessário |
+
+O Docker é uma alternativa para execução pelo terminal, descrita no [README](../README.md#docker). Não é necessário para abrir a interface no computador.

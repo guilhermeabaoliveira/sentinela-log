@@ -37,6 +37,20 @@ O resultado de acesso e a classificação de risco têm significados distintos. 
 
 A auditoria inclui a revelação de matrícula e permite consultar o histórico de operações. O instante de auditoria descreve a operação na aplicação, enquanto o instante de acesso descreve o evento informado.
 
+## Consulta de IA
+
+O arquivo `dados/consultas_ia.txt` usa uma linha por estado da tentativa, com cinco campos separados por tabulação:
+
+| Campo | Descrição |
+| --- | --- |
+| Operação | `CONSULTA_IA` |
+| Pergunta | Texto tratado enviado ao assistente |
+| Data e hora | Instante local do registro |
+| Resultado | `INICIADA`, `CONCLUIDA` ou `ERRO` |
+| Modelo | Identificador do modelo consultado |
+
+A chave de API não faz parte desse registro. Usuários e acessos permanecem em `dados/estado.txt`.
+
 ## Origens bloqueadas
 
 A lista contém identificações de máquinas ou origens bloqueadas, armazenadas em arquivo .txt. A presença de uma origem nessa lista exige aviso durante o registro do acesso.

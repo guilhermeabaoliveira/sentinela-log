@@ -2,7 +2,7 @@
 
 ## Assistência no desenvolvimento
 
-A assistência de IA abrange organização documental, consolidação do escopo e elaboração de propostas técnicas. A equipe é responsável pela revisão, compreensão, validação e apresentação do trabalho.
+A equipe utilizou assistência de IA no desenvolvimento e na documentação do projeto. A equipe é responsável pela revisão, compreensão, validação e apresentação do trabalho.
 
 ## Registros da entrega
 

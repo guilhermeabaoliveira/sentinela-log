@@ -10,7 +10,7 @@ O SentinelaLog é um projeto acadêmico em Python voltado ao registro de acessos
 
 O sistema reúne cadastros de usuários, eventos de acesso e auditoria para responder a perguntas como: quais tentativas falharam, quais máquinas aparecem associadas a mais de um usuário e quais acessos acionaram um alerta.
 
-**Estado atual:** aplicação local com interface Tkinter, modo terminal e consulta de leitura à Groq. A IA exige internet, uma chave própria e as dependências de requirements.txt.
+Aplicação local com interface Tkinter, temas escuro e claro, modo terminal e assistente de leitura dos registros. As funções locais não exigem internet. O assistente usa a Groq e requer conexão, chave própria e a dependência de `requirements.txt`.
 
 ## Funcionalidades do escopo
 
@@ -39,8 +39,11 @@ O sistema mantém persistência entre execuções e um gráfico textual da distr
 | risco.py | Classificação e motivos dos alertas |
 | armazenamento.py | Persistência e auditoria |
 | relatorios.py | Resumos e indicadores de segurança |
-| dados/ | Arquivos de dados fictícios |
-| testes/ | Verificação dos comportamentos da aplicação |
+| dados/ | Estado local em TXT e lista de origens bloqueadas |
+| testes/ | Verificações do menu, regras de risco e integração de IA |
+| docs/ | Manual, escopo, modelo de dados e limites de segurança |
+| requirements.txt | Dependência da integração Groq |
+| Dockerfile e .dockerignore | Execução opcional pelo terminal em contêiner |
 
 ## Ambiente
 
@@ -48,7 +51,7 @@ O sistema mantém persistência entre execuções e um gráfico textual da distr
 - Dados exclusivamente fictícios.
 - Persistência em arquivos de texto, conforme as restrições da disciplina.
 
-Instale a dependência da IA e inicie a interface na pasta do projeto.
+Baixe o projeto em **Code → Download ZIP** e extraia o arquivo, ou clone o repositório. Abra um terminal na pasta que contém `main.py`. Instale a dependência da IA e inicie a interface:
 
 ```powershell
 python -m pip install -r requirements.txt
@@ -57,7 +60,9 @@ python main.py
 
 Para executar pelo terminal, use `python main.py --terminal`. Na interface gráfica, abra **10 Assistente IA**. O botão **Configurar chave** recebe uma chave Groq em campo protegido e a mantém apenas durante a sessão. Alternativamente, defina `GROQ_API_KEY` no ambiente.
 
-O [manual](docs/manual.md) explica as operações. A [integração de IA](docs/integracao_ia.md) descreve os dados enviados, os limites e os testes de segurança.
+A interface abre em **tema escuro**. O botão no canto superior direito alterna para **Tema claro** e, depois, **Tema escuro**. A escolha vale para a sessão. Botões e itens do menu respondem ao mouse e ao foco do teclado; a página selecionada permanece marcada.
+
+O [manual](docs/manual.md) apresenta instalação, cadastro, demonstração local, configuração da chave e solução de problemas. A [integração de IA](docs/integracao_ia.md) descreve os dados enviados, os limites e os testes de segurança.
 
 ## Docker
 
@@ -70,7 +75,19 @@ docker run --rm -it --mount source=sentinelalog-dados,target=/app/dados sentinel
 
 Para habilitar a consulta de IA, defina `GROQ_API_KEY` no ambiente local e passe `-e GROQ_API_KEY` ao comando `docker run`. A imagem contém o código e a lista fictícia de bloqueadas. O volume mantém os dados entre execuções. A interface Tkinter pode ser executada diretamente no Windows com Python e Tkinter instalados. O contêiner abre o terminal por padrão. Para usar interface gráfica em contêiner, o ambiente precisa disponibilizar um servidor gráfico.
 
-Cada instalação utiliza sua própria chave. Forneça a chave durante a execução. A configuração do provedor pode ter limites e cobrança de uso.
+O Docker é opcional e inicia somente o modo terminal. A construção da imagem ainda não foi validada neste ambiente; a execução direta com Python foi verificada.
+
+Cada instalação utiliza sua própria chave. Ela não acompanha o código nem a imagem Docker. A configuração do provedor pode ter limites e cobrança de uso.
+
+## Verificação
+
+Com as dependências instaladas, execute os testes da integração sem usar uma chave real:
+
+```sh
+python -m unittest discover -s testes -p test_ia.py -v
+```
+
+Os demais arquivos em `testes/` e as funções de verificação nos módulos cobrem comportamentos do menu, persistência, usuários, acessos, risco e relatórios.
 
 ## Segurança
 
