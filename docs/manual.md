@@ -6,7 +6,7 @@ O SentinelaLog registra acessos fictícios de um laboratório, aplica regras de 
 
 ### Windows: abrir sem instalar Python
 
-1. Baixe **SentinelaLog-Windows-com-Codigo-Fonte.zip** em [Releases](https://github.com/guilhermeabaoliveira/sentinela-log/releases/tag/v2026.11.18-final). Esse arquivo é diferente de **Code → Download ZIP**, que contém o código-fonte.
+1. Baixe **SentinelaLog-Windows-com-Codigo-Fonte.zip** em [Releases](https://github.com/guilhermeabaoliveira/sentinela-log/releases/tag/v2026.11.18-final.2). Esse arquivo é diferente de **Code → Download ZIP**, que contém o código-fonte.
 2. Clique com o botão direito no ZIP e selecione **Extrair Tudo**.
 3. Abra a pasta extraída **SentinelaLog** e dê dois cliques em **SentinelaLog.exe**.
 4. Mantenha a pasta `_internal` junto do executável. Ela contém o ambiente Python e as dependências.

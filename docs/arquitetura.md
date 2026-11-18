@@ -27,7 +27,7 @@ A classificação acompanha o registro do acesso; a confirmação de sucesso oco
 
 ## Código dos integrantes
 
-A tabela indica a divisão de responsabilidades do grupo. Os arquivos podem ter recebido ajustes de integração; o histórico Git preserva os autores de cada alteração.
+A tabela relaciona os integrantes aos módulos e suas funções no sistema.
 
 | Integrante | Arquivo do módulo | Função no conjunto |
 | --- | --- | --- |

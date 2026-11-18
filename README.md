@@ -48,7 +48,7 @@ O sistema mantém persistência entre execuções e um gráfico textual da distr
 
 ## Abrir no Windows sem instalar Python
 
-Baixe a [versão portátil para Windows 64 bits](https://github.com/guilhermeabaoliveira/sentinela-log/releases/download/v2026.11.18-final/SentinelaLog-Windows-com-Codigo-Fonte.zip) na página de [downloads](https://github.com/guilhermeabaoliveira/sentinela-log/releases/tag/v2026.11.18-final).
+Baixe a [versão portátil para Windows 64 bits](https://github.com/guilhermeabaoliveira/sentinela-log/releases/download/v2026.11.18-final.2/SentinelaLog-Windows-com-Codigo-Fonte.zip) na página de [downloads](https://github.com/guilhermeabaoliveira/sentinela-log/releases/tag/v2026.11.18-final.2).
 
 1. Extraia o ZIP inteiro usando **Extrair Tudo**.
 2. Abra a pasta **SentinelaLog** e dê dois cliques em **SentinelaLog.exe**.
