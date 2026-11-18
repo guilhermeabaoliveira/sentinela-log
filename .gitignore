@@ -10,3 +10,6 @@ venv/
 Thumbs.db
 .DS_Store
 /dados/execucao/
+/dados/estado.txt.tmp
+/dados/consultas_ia.jsonl
+/dados/testes/

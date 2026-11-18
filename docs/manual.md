@@ -2,9 +2,13 @@
 
 Referência das operações de cadastro, registro de acessos, consultas e relatórios do SentinelaLog.
 
+## Iniciar
+
+Na pasta do programa, execute `python -m pip install -r requirements.txt` e depois `python main.py` para abrir a interface gráfica. O modo terminal utiliza `python main.py --terminal`.
+
 ## Finalidade
 
-Registrar acessos fictícios a um laboratório e consultar sua análise de risco. O sistema permite organizar usuários, eventos e auditoria em uma interface de terminal.
+Registrar acessos fictícios a um laboratório e consultar sua análise de risco. O sistema permite organizar usuários, eventos e auditoria em uma interface gráfica e no modo terminal.
 
 ## Operações
 
@@ -32,9 +36,9 @@ Registrar acessos fictícios a um laboratório e consultar sua análise de risco
 
 ## Classificação de risco
 
-A classificação reúne uma categoria de risco e os motivos associados ao acesso. A política de classificação, incluindo categorias e limites de horário, está em definição.
+A classificação reúne uma categoria de risco e os motivos associados ao acesso. Um acesso sem sinais é normal. Falha ou horário fora da faixa permitida gera suspeito. Falha combinada com horário fora da faixa gera crítico. Uma origem da lista de bloqueadas também gera crítico e aviso. Os limites do horário são inclusivos e faixas noturnas são aceitas. Esses sinais priorizam a revisão dos registros.
 
-Origens presentes na lista de bloqueadas exigem um aviso. A categoria atribuída ao evento depende da política de classificação. A identificação de máquina compartilhada indica usuários distintos naquela origem, sem comprovar autoria física de uma ação.
+Origens presentes na lista de bloqueadas exigem um aviso. A identificação de máquina compartilhada indica usuários distintos naquela origem, sem comprovar autoria física de uma ação.
 
 ## Persistência e falhas
 
@@ -46,4 +50,4 @@ O uso é restrito a dados fictícios. Mascaramento de matrícula não cifra arqu
 
 ## Perguntas em linguagem natural
 
-A funcionalidade depende do módulo fornecido pela disciplina. Consulte [integração de IA](integracao_ia.md) para a finalidade e a disponibilidade.
+Abra a opção **10 Assistente IA**, configure sua chave Groq e faça uma pergunta sobre os acessos fictícios. Revise o texto e confirme o envio externo. Consulte [integração de IA](integracao_ia.md) para os dados enviados, os limites e o registro local de consultas.

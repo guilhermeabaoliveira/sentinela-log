@@ -1,0 +1,7 @@
+*
+!requirements.txt
+!*.py
+!components/
+!components/*.py
+!dados/
+!dados/bloqueadas.txt
