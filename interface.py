@@ -11,6 +11,7 @@ import risco
 import relatorios
 
 from components import estilos, sidebar, widgets, tabelas, formularios
+from components.chat_ia import ChatIA
 
 PASTA = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dados")
 
@@ -25,6 +26,9 @@ class SentinelaLogApp:
 
         estilos.configurar(root)
         self.estado = armazenamento.carregar(PASTA)
+        self.historico_ia = []
+        self.chave_groq = ""
+        self.ia_ocupada = False
         self._estrutura()
         self.mostrar_inicio()
 
@@ -40,7 +44,7 @@ class SentinelaLogApp:
             ("▧", "7  Auditoria", self.mostrar_auditoria),
             ("◉", "8  Revelar matrícula", self.revelar_matricula),
             ("⚙", "9  Segurança", self.mostrar_seguranca),
-            ("✧", "10  IA reservada", self.mostrar_ia)
+            ("✧", "10  Assistente IA", self.mostrar_ia)
         ]
 
         sidebar.criar(self.root, opcoes, self.sair)
@@ -169,7 +173,7 @@ class SentinelaLogApp:
             ("7  Auditoria", self.mostrar_auditoria, "#1e3854"),
             ("8  Revelar matrícula", self.revelar_matricula, "#1e3854"),
             ("9  Segurança", self.mostrar_seguranca, "#1e3854"),
-            ("10  IA reservada", self.mostrar_ia, "#514078")
+            ("10  Assistente IA", self.mostrar_ia, "#514078")
         ]
 
         grade = tk.Frame(self.content, bg=estilos.BG)
@@ -398,6 +402,8 @@ class SentinelaLogApp:
             "Histórico das operações persistidas no sistema."
         )
 
+        widgets.botao(self.content, "Consultas de IA", self.mostrar_auditoria_ia).pack(anchor="w")
+
         linhas = []
 
         for item in reversed(armazenamento.consultar_auditoria(self.estado)):
@@ -416,6 +422,18 @@ class SentinelaLogApp:
             (65, 180, 230, 180),
             linhas
         )
+
+    def mostrar_auditoria_ia(self):
+        import agente_ia
+        try:
+            registros = agente_ia.listar_consultas(PASTA)
+        except (ValueError, OSError) as erro:
+            messagebox.showerror("Auditoria de IA", str(erro), parent=self.root)
+            return
+        self._limpar("Consultas de IA", "Pergunta tratada, data e hora e resultado de cada tentativa.")
+        self._tabela(("momento", "operacao", "pergunta", "resultado"), (170, 130, 340, 110),
+                     [(r["momento"], r["operacao"], r["pergunta"], r["resultado"])
+                      for r in reversed(registros)])
 
     def revelar_matricula(self):
         matricula = self._perguntar_matricula("Revelar matrícula")
@@ -503,36 +521,10 @@ class SentinelaLogApp:
 
     def mostrar_ia(self):
         self._limpar(
-            "10  IA reservada",
-            "Espaço reservado conforme o escopo original do projeto."
+            "10  Assistente IA",
+            "Consulte os dados fictícios em linguagem natural."
         )
-
-        painel = tk.Frame(
-            self.content, bg=estilos.CARD,
-            highlightthickness=1,
-            highlightbackground=estilos.BORDER
-        )
-        painel.pack(fill="x", pady=12)
-
-        tk.Label(
-            painel, text="Módulo de IA",
-            bg=estilos.CARD, fg=estilos.PURPLE,
-            font=(estilos.FONT, 20, "bold")
-        ).pack(anchor="w", padx=24, pady=(24, 8))
-
-        tk.Label(
-            painel,
-            text="A consulta ao agente ainda não está disponível.\n\n"
-                 "Esta área permanece reservada para a integração prevista no projeto.",
-            bg=estilos.CARD, fg="#d4deeb",
-            font=(estilos.FONT, 11), justify="left"
-        ).pack(anchor="w", padx=24, pady=(0, 24))
-
-        tk.Label(
-            painel, text="STATUS: AGUARDANDO INTEGRAÇÃO",
-            bg=estilos.CARD, fg=estilos.YELLOW,
-            font=(estilos.FONT, 8, "bold")
-        ).pack(anchor="w", padx=24, pady=(0, 20))
+        self.chat = ChatIA(self, PASTA)
 
     def sair(self):
         if messagebox.askyesno(

@@ -4,10 +4,6 @@ import usuarios
 import acessos
 import risco
 import relatorios
-from interface import executar
-
-if __name__ == "__main__":
-    executar()
 
 PASTA = os.path.join(os.path.dirname(__file__), "dados")
 
@@ -18,7 +14,7 @@ def mostrar_menu():
     print("\nSentinelaLog — demonstração com dados fictícios")
     print("1 Cadastrar | 2 Usuários | 3 Editar | 4 Excluir")
     print("5 Registrar acesso | 6 Acessos | 7 Auditoria")
-    print("8 Revelar matrícula | 9 Segurança | 10 IA reservada")
+    print("8 Revelar matrícula | 9 Segurança | 10 Assistente IA")
     print("0 Sair")
 
 def dados_usuario():
@@ -97,7 +93,12 @@ def executar(pasta=PASTA):
                 print("Compartilhamento não identifica autoria de uma ação.")
                 operacao, afetado = "RELATORIO_SEGURANCA", "-"
             elif opcao == "10":
-                print("Consulta ao agente indisponível.")
+                import agente_ia
+                pergunta = ler("Pergunta ao assistente")
+                preparado = agente_ia.preparar(pergunta, estado)
+                print("A Groq receberá fatos com aliases e esta pergunta:", preparado["pergunta"])
+                if ler("Autorizar envio externo? Digite sim").lower() == "sim":
+                    print(agente_ia.consultar(preparado, pasta))
                 continue
             else:
                 print("Opção indisponível neste marco.")
@@ -124,5 +125,10 @@ def abertura():
     print("As regras são uma proposta didática, não exigência literal dos professores.")
 
 if __name__ == "__main__":
-    abertura()
-    executar()
+    import sys
+    if "--terminal" in sys.argv:
+        abertura()
+        executar()
+    else:
+        from interface import executar as executar_interface
+        executar_interface()
