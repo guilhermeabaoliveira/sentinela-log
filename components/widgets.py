@@ -6,12 +6,12 @@ from . import estilos as s
 def botao(pai, texto, comando, cor="#1e3854"):
     primaria = cor == "#087e68"
     perigo = cor == "#7b3040"
-    fundo = s.BLUE if primaria else ("#f5e6e6" if perigo else s.BUTTON)
+    fundo = s.BLUE if primaria else (s.DANGER_BG if perigo else s.BUTTON)
     frente = "#ffffff" if primaria else (s.RED if perigo else s.TEXT)
     return tk.Button(
         pai, text=texto, command=comando,
         bg=fundo, fg=frente,
-        activebackground="#214c75" if primaria else "#dce2e9",
+        activebackground=s.BLUE if primaria else s.HOVER,
         activeforeground="#ffffff" if primaria else frente,
         relief="flat", bd=0,
         padx=16, pady=10,
@@ -64,11 +64,11 @@ def secao(pai, texto):
     ).pack(anchor="w", padx=18, pady=(16, 8))
 
 
-def texto(pai, valor, cor=s.TEXT, fonte=9, **kwargs):
+def texto(pai, valor, cor=None, fonte=9, **kwargs):
     tk.Label(
         pai, text=valor,
         bg=kwargs.pop("bg", s.CARD),
-        fg=cor,
+        fg=cor or s.TEXT,
         font=(kwargs.pop("familia", s.FONT), fonte),
         anchor="w", justify="left", **kwargs
     ).pack(anchor="w", padx=20, pady=3)

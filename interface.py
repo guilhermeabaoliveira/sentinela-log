@@ -63,6 +63,14 @@ class SentinelaLogApp:
         )
         self.page_title.pack(side="left", padx=28)
 
+        self.tema_botao = tk.Button(
+            topo, text="Tema claro", command=self.alternar_tema,
+            bg=estilos.BUTTON, fg=estilos.TEXT,
+            activebackground=estilos.HOVER, activeforeground=estilos.TEXT,
+            relief="flat", padx=14, pady=7, font=(estilos.FONT, 9), cursor="hand2"
+        )
+        self.tema_botao.pack(side="right", padx=(0, 26))
+
         tk.Label(
             topo, text="Execução local",
             bg=estilos.TOP, fg=estilos.MUTED,
@@ -71,6 +79,10 @@ class SentinelaLogApp:
 
         self.content = tk.Frame(principal, bg=estilos.BG)
         self.content.pack(fill="both", expand=True, padx=26, pady=22)
+
+    def alternar_tema(self):
+        estilos.alternar(self.root)
+        self.tema_botao.configure(text="Tema escuro" if estilos.CLARO else "Tema claro")
 
     def _limpar(self, titulo, descricao):
         for item in self.content.winfo_children():

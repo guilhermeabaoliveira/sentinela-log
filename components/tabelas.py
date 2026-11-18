@@ -47,6 +47,6 @@ def criar(pai, colunas, larguras=None):
 
 
 def preencher(tree, linhas):
-    tree.tag_configure("alternada", background="#f5f7fa")
+    tree.tag_configure("alternada", background=s.ALT)
     for indice, linha in enumerate(linhas):
         tree.insert("", "end", values=linha, tags=("alternada",) if indice % 2 else ())
