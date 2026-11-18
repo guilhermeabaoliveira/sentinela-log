@@ -499,8 +499,22 @@ class SentinelaLogApp:
             ]
         ])
 
-        corpo = tk.Frame(self.content, bg=estilos.CARD)
-        corpo.pack(fill="both", expand=True, pady=(20, 0))
+        painel = tk.Frame(self.content, bg=estilos.CARD)
+        painel.pack(fill="both", expand=True, pady=(20, 0))
+        rolagem = tk.Scrollbar(painel, orient="vertical")
+        rolagem.pack(side="right", fill="y")
+        canvas = tk.Canvas(painel, bg=estilos.CARD, highlightthickness=0,
+                           yscrollcommand=rolagem.set)
+        canvas.pack(side="left", fill="both", expand=True)
+        rolagem.configure(command=canvas.yview)
+        corpo = tk.Frame(canvas, bg=estilos.CARD)
+        janela = canvas.create_window((0, 0), window=corpo, anchor="nw")
+        corpo.bind("<Configure>", lambda evento: canvas.configure(scrollregion=canvas.bbox("all")))
+        canvas.bind("<Configure>", lambda evento: canvas.itemconfigure(janela, width=evento.width))
+
+        widgets.secao(corpo, "Destaques do histórico")
+        for linha in relatorios.linhas_relatorio(self.estado)[2:4]:
+            widgets.texto(corpo, linha, wraplength=780)
 
         widgets.secao(corpo, "Regras de classificação")
 
@@ -547,7 +561,23 @@ class SentinelaLogApp:
 
 def executar():
     root = tk.Tk()
-    SentinelaLogApp(root)
+
+    def informar_erro(tipo, erro, rastreio):
+        messagebox.showerror("Operação não concluída",
+            "Não foi possível concluir a operação. Confira os arquivos de dados "
+            "e as permissões da pasta. Preserve uma cópia antes de qualquer correção.",
+            parent=root)
+
+    root.report_callback_exception = informar_erro
+    try:
+        SentinelaLogApp(root)
+    except (ValueError, OSError, UnicodeError):
+        messagebox.showerror("Não foi possível abrir os dados",
+            "Confira dados/estado.txt e as permissões da pasta. "
+            "O arquivo não foi substituído. Preserve uma cópia e restaure uma base válida.",
+            parent=root)
+        root.destroy()
+        return
     root.mainloop()
 
 

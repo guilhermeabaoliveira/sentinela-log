@@ -4,7 +4,9 @@
 
 O SentinelaLog é um projeto acadêmico em Python voltado ao registro de acessos a um laboratório fictício, à identificação de situações suspeitas e à consulta de informações de segurança.
 
-[Documentação](docs/README.md) · [Manual](docs/manual.md) · [Escopo](docs/escopo.md) · [Segurança](docs/seguranca.md)
+[Documentação](docs/README.md) · [Manual](docs/manual.md) · [Escopo](docs/escopo.md) · [Segurança](docs/seguranca.md) · [Arquitetura e pastas](docs/arquitetura.md)
+
+[Explainer técnico e manual em PDF](docs/SentinelaLog_Explainer.pdf)
 
 ## Sobre o projeto
 
@@ -43,11 +45,10 @@ O sistema mantém persistência entre execuções e um gráfico textual da distr
 | testes/ | Verificações do menu, regras de risco e integração de IA |
 | docs/ | Manual, escopo, modelo de dados e limites de segurança |
 | requirements.txt | Dependência da integração Groq |
-| Dockerfile e .dockerignore | Execução opcional pelo terminal em contêiner |
 
 ## Abrir no Windows sem instalar Python
 
-Baixe a [versão portátil para Windows 64 bits](https://github.com/guilhermeabaoliveira/sentinela-log/releases/download/v2026.11.18-windows/SentinelaLog-Windows-x64.zip) na página de [downloads](https://github.com/guilhermeabaoliveira/sentinela-log/releases/tag/v2026.11.18-windows).
+Baixe a [versão portátil para Windows 64 bits](https://github.com/guilhermeabaoliveira/sentinela-log/releases/download/v2026.11.18-final/SentinelaLog-Windows-com-Codigo-Fonte.zip) na página de [downloads](https://github.com/guilhermeabaoliveira/sentinela-log/releases/tag/v2026.11.18-final).
 
 1. Extraia o ZIP inteiro usando **Extrair Tudo**.
 2. Abra a pasta **SentinelaLog** e dê dois cliques em **SentinelaLog.exe**.
@@ -57,7 +58,9 @@ O pacote inclui Python, Tkinter e as dependências da Groq. Não exige PowerShel
 
 O assistente continua opcional: configure sua própria chave em **10 Assistente IA → Configurar chave** e tenha conexão com a internet. Nenhuma chave acompanha o download.
 
-O botão **Code → Download ZIP** baixa o código-fonte, não o pacote executável. Para estudar ou alterar o código, siga as instruções abaixo.
+O pacote de download também inclui `codigo-fonte/`, com os módulos Python e a documentação. No VS Code, use **Arquivo → Abrir Pasta** e selecione `codigo-fonte`. O [mapa de arquivos](docs/arquitetura.md) indica o módulo de cada integrante e explica as dependências do executável.
+
+O botão **Code → Download ZIP** baixa somente o código-fonte do repositório. O download de Releases reúne código e executável; ele não substitui a estrutura do repositório. Alterar um `.py` não atualiza o `.exe`: uma nova versão do executável precisa ser gerada após alterações no programa.
 
 ## Ambiente para executar o código-fonte
 
@@ -77,21 +80,6 @@ Para executar pelo terminal, use `python main.py --terminal`. Na interface gráf
 A interface abre em **tema escuro**. O botão no canto superior direito alterna para **Tema claro** e, depois, **Tema escuro**. A escolha vale para a sessão. Botões e itens do menu respondem ao mouse e ao foco do teclado; a página selecionada permanece marcada.
 
 O [manual](docs/manual.md) apresenta instalação, cadastro, demonstração local, configuração da chave e solução de problemas. A [integração de IA](docs/integracao_ia.md) descreve os dados enviados, os limites e os testes de segurança.
-
-## Docker
-
-Com Docker instalado, crie a imagem e abra o modo terminal.
-
-```sh
-docker build -t sentinelalog .
-docker run --rm -it --mount source=sentinelalog-dados,target=/app/dados sentinelalog
-```
-
-Para habilitar a consulta de IA, defina `GROQ_API_KEY` no ambiente local e passe `-e GROQ_API_KEY` ao comando `docker run`. A imagem contém o código e a lista fictícia de bloqueadas. O volume mantém os dados entre execuções. A interface Tkinter pode ser executada diretamente no Windows com Python e Tkinter instalados. O contêiner abre o terminal por padrão. Para usar interface gráfica em contêiner, o ambiente precisa disponibilizar um servidor gráfico.
-
-O Docker é opcional e inicia somente o modo terminal. A construção da imagem ainda não foi validada neste ambiente; a execução direta com Python foi verificada.
-
-Cada instalação utiliza sua própria chave. Ela não acompanha o código nem a imagem Docker. A configuração do provedor pode ter limites e cobrança de uso.
 
 ## Verificação
 

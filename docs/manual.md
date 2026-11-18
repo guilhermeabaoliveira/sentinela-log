@@ -6,7 +6,7 @@ O SentinelaLog registra acessos fictícios de um laboratório, aplica regras de 
 
 ### Windows: abrir sem instalar Python
 
-1. Baixe **SentinelaLog-Windows-x64.zip** em [Releases](https://github.com/guilhermeabaoliveira/sentinela-log/releases/tag/v2026.11.18-windows). Esse arquivo é diferente de **Code → Download ZIP**, que contém o código-fonte.
+1. Baixe **SentinelaLog-Windows-com-Codigo-Fonte.zip** em [Releases](https://github.com/guilhermeabaoliveira/sentinela-log/releases/tag/v2026.11.18-final). Esse arquivo é diferente de **Code → Download ZIP**, que contém o código-fonte.
 2. Clique com o botão direito no ZIP e selecione **Extrair Tudo**.
 3. Abra a pasta extraída **SentinelaLog** e dê dois cliques em **SentinelaLog.exe**.
 4. Mantenha a pasta `_internal` junto do executável. Ela contém o ambiente Python e as dependências.
@@ -132,4 +132,12 @@ Mascaramento protege a exibição, não cifra o arquivo. O histórico é protegi
 | Falha de conexão ou limite do provedor | Confira a conexão e aguarde antes de tentar novamente |
 | Arquivo inválido ou falha de gravação | Preserve os arquivos, confira permissões e restaure uma cópia válida se necessário |
 
-O Docker é uma alternativa para execução pelo terminal, descrita no [README](../README.md#docker). Não é necessário para abrir a interface no computador.
+## 11. Consultar os códigos no VS Code
+
+No pacote de Releases, abra **Arquivo → Abrir Pasta → SentinelaLog/codigo-fonte** no VS Code. Os seis módulos do grupo estão diretamente nessa pasta; a interface está em `interface.py` e `components/`. Consulte o [mapa de arquivos e responsabilidades](arquitetura.md).
+
+Para executar a distribuição pronta, volte à pasta principal e abra `SentinelaLog.exe`. Não é necessário iniciar os `.py` para usar o executável. Para executar pelo fonte, siga a seção 1.
+
+O executável grava em `dados/` ao lado de `SentinelaLog.exe`. Ao executar o fonte, a base fica em `codigo-fonte/dados/`. São bases independentes; abrir uma delas não importa os registros da outra. Os arquivos fornecidos no fonte podem incluir um cadastro fictício de exemplo.
+
+A cópia de `codigo-fonte` fornecida no ZIP serve para leitura e execução com Python. Ela não contém o histórico `.git`. Para sincronizar commits pelo VS Code, abra uma cópia clonada do repositório.

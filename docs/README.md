@@ -4,6 +4,8 @@ A documentação apresenta o escopo, o uso e as restrições da aplicação.
 
 | Documento | Conteúdo |
 | --- | --- |
+| [Arquitetura e pastas](arquitetura.md) | Fluxo do sistema, código dos integrantes e suporte do executável |
+| [Explainer técnico em PDF](SentinelaLog_Explainer.pdf) | Visão geral, arquitetura, instalação e demonstração |
 | [Manual do usuário](manual.md) | Operações, campos e interpretação dos resultados |
 | [Escopo](escopo.md) | Funcionalidades e requisitos técnicos da aplicação |
 | [Modelo de dados](modelo_dados.md) | Campos e relações dos registros |
