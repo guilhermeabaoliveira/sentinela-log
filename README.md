@@ -45,7 +45,21 @@ O sistema mantém persistência entre execuções e um gráfico textual da distr
 | requirements.txt | Dependência da integração Groq |
 | Dockerfile e .dockerignore | Execução opcional pelo terminal em contêiner |
 
-## Ambiente
+## Abrir no Windows sem instalar Python
+
+Baixe a [versão portátil para Windows 64 bits](https://github.com/guilhermeabaoliveira/sentinela-log/releases/download/v2026.11.18-windows/SentinelaLog-Windows-x64.zip) na página de [downloads](https://github.com/guilhermeabaoliveira/sentinela-log/releases/tag/v2026.11.18-windows).
+
+1. Extraia o ZIP inteiro usando **Extrair Tudo**.
+2. Abra a pasta **SentinelaLog** e dê dois cliques em **SentinelaLog.exe**.
+3. Mantenha `_internal` e `dados` junto do executável.
+
+O pacote inclui Python, Tkinter e as dependências da Groq. Não exige PowerShell, comandos ou Docker. Cadastros e acessos começam vazios; os registros são gravados na pasta `dados` ao lado do executável. Use uma pasta com permissão de gravação. O executável não tem assinatura digital de editor.
+
+O assistente continua opcional: configure sua própria chave em **10 Assistente IA → Configurar chave** e tenha conexão com a internet. Nenhuma chave acompanha o download.
+
+O botão **Code → Download ZIP** baixa o código-fonte, não o pacote executável. Para estudar ou alterar o código, siga as instruções abaixo.
+
+## Ambiente para executar o código-fonte
 
 - Python 3.11 ou superior. A interface gráfica utiliza Tkinter.
 - Dados exclusivamente fictícios.

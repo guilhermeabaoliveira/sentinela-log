@@ -9,5 +9,6 @@
 - Matrículas mascaradas também na seleção de usuário para registrar acessos.
 - Manual de instalação, operações, demonstração e solução de problemas atualizado.
 - Dockerfile opcional para execução pelo terminal.
+- Distribuição portátil para Windows 64 bits, com Python e dependências incluídos e abertura confirmada no Windows.
 
-A distribuição contém código-fonte Python; não inclui instalador ou chave de API.
+O repositório mantém o código-fonte Python. A versão portátil está em Releases e não exige instalador. Nenhuma distribuição inclui chave de API.

@@ -4,6 +4,19 @@ O SentinelaLog registra acessos fictícios de um laboratório, aplica regras de 
 
 ## 1. Instalação e execução
 
+### Windows: abrir sem instalar Python
+
+1. Baixe **SentinelaLog-Windows-x64.zip** em [Releases](https://github.com/guilhermeabaoliveira/sentinela-log/releases/tag/v2026.11.18-windows). Esse arquivo é diferente de **Code → Download ZIP**, que contém o código-fonte.
+2. Clique com o botão direito no ZIP e selecione **Extrair Tudo**.
+3. Abra a pasta extraída **SentinelaLog** e dê dois cliques em **SentinelaLog.exe**.
+4. Mantenha a pasta `_internal` junto do executável. Ela contém o ambiente Python e as dependências.
+
+Não é necessário instalar Python nem executar comandos. A pasta `dados`, ao lado do executável, guarda os registros; o pacote começa sem cadastros ou acessos. Extraia para uma pasta do seu usuário com permissão de gravação. O executável não possui assinatura digital de editor.
+
+Para usar o assistente, consulte a seção 7: sua chave Groq e a conexão com a internet continuam necessárias. Para migrar registros de outra cópia, feche ambas as instâncias e copie seus arquivos de dados para a pasta `dados` da versão portátil, preservando antes uma cópia de segurança.
+
+### Executar pelo código-fonte
+
 1. Tenha Python 3.11 ou superior instalado. Para a janela gráfica, o ambiente Python precisa incluir Tkinter.
 2. Baixe o ZIP do repositório e extraia o conteúdo, ou use uma cópia clonada.
 3. Abra um terminal na pasta que contém `main.py`.

@@ -1,5 +1,6 @@
 
 import os
+import sys
 import tkinter as tk
 from tkinter import messagebox, simpledialog
 from datetime import datetime
@@ -13,7 +14,8 @@ import relatorios
 from components import estilos, sidebar, widgets, tabelas, formularios
 from components.chat_ia import ChatIA
 
-PASTA = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dados")
+PASTA = os.path.join(os.path.dirname(sys.executable) if getattr(sys, "frozen", False)
+                     else os.path.dirname(os.path.abspath(__file__)), "dados")
 
 
 class SentinelaLogApp:

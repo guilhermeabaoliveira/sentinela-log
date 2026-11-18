@@ -1,11 +1,13 @@
 import os
+import sys
 import armazenamento
 import usuarios
 import acessos
 import risco
 import relatorios
 
-PASTA = os.path.join(os.path.dirname(__file__), "dados")
+PASTA = os.path.join(os.path.dirname(sys.executable) if getattr(sys, "frozen", False)
+                     else os.path.dirname(__file__), "dados")
 
 def ler(rotulo):
     return input(rotulo + ": ").strip()
@@ -129,7 +131,6 @@ def abertura():
     print("As regras são uma proposta didática, não exigência literal dos professores.")
 
 if __name__ == "__main__":
-    import sys
     if "--terminal" in sys.argv:
         abertura()
         executar()
