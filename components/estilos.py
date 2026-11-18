@@ -9,7 +9,9 @@ TEMAS = {
         "NAV": "#14171b", "NAV_TEXT": "#dee3e9", "NAV_MUTED": "#a1aab6",
         "NAV_ACTIVE": "#303944", "BUTTON": "#333b45", "HOVER": "#414d5c",
         "DANGER_BG": "#462e32", "ALT": "#292f36", "HEADING": "#303740",
-        "SELECT": "#354e68", "SELECT_TEXT": "#f0f4f9", "SCROLL": "#596370"
+        "SELECT": "#354e68", "SELECT_TEXT": "#f0f4f9", "SCROLL": "#596370", "ACCENT": "#78b7e9",
+        "PRIMARY_HOVER": "#427fb6", "NAV_HOVER": "#263342",
+        "EXIT": "#69323b", "EXIT_HOVER": "#8b3f4a", "EXIT_TEXT": "#fff5f4"
     },
     True: {
         "BG": "#f5f6f8", "PANEL": "#fafbfd", "CARD": "#ffffff",
@@ -19,7 +21,9 @@ TEMAS = {
         "NAV": "#252c35", "NAV_TEXT": "#e4e8ee", "NAV_MUTED": "#afb8c4",
         "NAV_ACTIVE": "#3b4859", "BUTTON": "#e8ecf1", "HOVER": "#dce2e9",
         "DANGER_BG": "#f5e6e6", "ALT": "#f0f3f7", "HEADING": "#e9edf2",
-        "SELECT": "#dbe7f3", "SELECT_TEXT": "#173b60", "SCROLL": "#c5ccd5"
+        "SELECT": "#dbe7f3", "SELECT_TEXT": "#173b60", "SCROLL": "#c5ccd5", "ACCENT": "#28679e",
+        "PRIMARY_HOVER": "#3478b2", "NAV_HOVER": "#354353",
+        "EXIT": "#873c46", "EXIT_HOVER": "#a64a56", "EXIT_TEXT": "#fff5f4"
     }
 }
 globals().update(TEMAS[CLARO])
@@ -74,5 +78,7 @@ def alternar(root):
             widget.tag_configure("alternada", background=ALT)
         for filho in widget.winfo_children():
             recolorir(filho)
+        if hasattr(widget, "_atualizar_aparencia"):
+            widget._atualizar_aparencia()
 
     recolorir(root)

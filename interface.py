@@ -47,7 +47,7 @@ class SentinelaLogApp:
             ("✧", "10  Assistente IA", self.mostrar_ia)
         ]
 
-        sidebar.criar(self.root, opcoes, self.sair)
+        self.barra = sidebar.criar(self.root, opcoes, self.sair)
 
         principal = tk.Frame(self.root, bg=estilos.BG)
         principal.pack(side="left", fill="both", expand=True)
@@ -63,12 +63,8 @@ class SentinelaLogApp:
         )
         self.page_title.pack(side="left", padx=28)
 
-        self.tema_botao = tk.Button(
-            topo, text="Tema claro", command=self.alternar_tema,
-            bg=estilos.BUTTON, fg=estilos.TEXT,
-            activebackground=estilos.HOVER, activeforeground=estilos.TEXT,
-            relief="flat", padx=14, pady=7, font=(estilos.FONT, 9), cursor="hand2"
-        )
+        self.tema_botao = widgets.botao(topo, "Tema claro", self.alternar_tema)
+        self.tema_botao.configure(padx=14, pady=7, font=(estilos.FONT, 9))
         self.tema_botao.pack(side="right", padx=(0, 26))
 
         tk.Label(
@@ -89,6 +85,7 @@ class SentinelaLogApp:
             item.destroy()
 
         self.page_title.configure(text="Monitor de acessos")
+        sidebar.selecionar(self.barra, titulo)
         self.estado = armazenamento.carregar(PASTA)
         widgets.titulo(self.content, titulo, descricao)
 
