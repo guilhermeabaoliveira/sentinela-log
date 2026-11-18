@@ -76,6 +76,10 @@ def executar(pasta=PASTA):
             elif opcao == "7":
                 for log in estado["auditoria"]:
                     print(log["momento"], log["operacao"], usuarios.mascarar(log["afetado"]))
+                import agente_ia
+                print("Consultas de IA:")
+                for log in agente_ia.listar_consultas(pasta):
+                    print(log["momento"], log["operacao"], log["pergunta"], log["resultado"])
                 operacao, afetado = "CONSULTA_AUDITORIA", "-"
             elif opcao == "8":
                 afetado = ler("Matrícula fictícia")

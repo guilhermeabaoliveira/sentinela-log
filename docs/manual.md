@@ -50,4 +50,4 @@ O uso é restrito a dados fictícios. Mascaramento de matrícula não cifra arqu
 
 ## Perguntas em linguagem natural
 
-Abra a opção **10 Assistente IA**, configure sua chave Groq e faça uma pergunta sobre os acessos fictícios. Revise o texto e confirme o envio externo. Consulte [integração de IA](integracao_ia.md) para os dados enviados, os limites e o registro local de consultas.
+No terminal, defina `GROQ_API_KEY` no ambiente antes de iniciar. Na interface gráfica, use **Configurar chave**. Abra a opção **10 Assistente IA** e faça uma pergunta sobre os acessos fictícios. Revise o texto e confirme o envio externo. Consulte [integração de IA](integracao_ia.md) para os dados enviados, os limites e o registro local de consultas.

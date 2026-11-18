@@ -30,7 +30,7 @@ Apresentar total de acessos e falhas, usuários com mais falhas, horários de ma
 
 ## Complementos
 
-O escopo inclui uma funcionalidade extra, ainda não definida, e a [integração de IA](integracao_ia.md) fornecida pela disciplina.
+A funcionalidade extra é o gráfico textual da distribuição dos riscos. A [integração de IA](integracao_ia.md) permite perguntas sobre os registros, conforme a finalidade prevista no enunciado.
 
 ## Requisitos técnicos
 

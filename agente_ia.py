@@ -94,18 +94,29 @@ def preparar(pergunta, estado, historico=()):
 
 def registrar_consulta(pasta, pergunta, resultado):
     os.makedirs(pasta, exist_ok=True)
-    registro = {"operacao": "CONSULTA_IA", "pergunta": pergunta,
-                "momento": datetime.now().isoformat(timespec="seconds"),
-                "resultado": resultado, "modelo": MODELO}
-    with open(os.path.join(pasta, "consultas_ia.jsonl"), "a", encoding="utf-8") as arquivo:
-        arquivo.write(json.dumps(registro, ensure_ascii=False) + "\n")
+    # Uma operação por linha; os cinco campos são separados por tabulação.
+    campos = ["CONSULTA_IA", pergunta, datetime.now().isoformat(timespec="seconds"),
+              resultado, MODELO]
+    campos = [campo.replace("\t", " ").replace("\r", " ").replace("\n", " ")
+              for campo in campos]
+    with open(os.path.join(pasta, "consultas_ia.txt"), "a", encoding="utf-8") as arquivo:
+        arquivo.write("\t".join(campos) + "\n")
 
 
 def listar_consultas(pasta):
-    caminho = os.path.join(pasta, "consultas_ia.jsonl")
+    caminho = os.path.join(pasta, "consultas_ia.txt")
     try:
         with open(caminho, encoding="utf-8") as arquivo:
-            return [json.loads(linha) for linha in arquivo if linha.strip()]
+            registros = []
+            for linha in arquivo:
+                if not linha.strip():
+                    continue
+                campos = linha.rstrip("\n").split("\t")
+                if len(campos) != 5:
+                    raise ValueError()
+                registros.append(dict(zip(
+                    ["operacao", "pergunta", "momento", "resultado", "modelo"], campos)))
+            return registros
     except FileNotFoundError:
         return []
     except (ValueError, UnicodeError):

@@ -4,9 +4,9 @@ A opção 10 permite perguntas em português sobre o histórico fictício do lab
 
 ## Configuração e execução
 
-Instale `requirements.txt` e execute `python main.py`. Abra **10 Assistente IA** e selecione **Configurar chave**. O campo oculta a chave, que permanece somente na memória da sessão. A variável de ambiente `GROQ_API_KEY` também é aceita. O arquivo `.env.example` documenta o nome da variável. Defina a variável no ambiente ou use o campo da interface.
+Instale `requirements.txt`. Para executar pelo terminal, defina `GROQ_API_KEY` no ambiente e use `python main.py --terminal`. Para a interface gráfica, execute `python main.py`, abra **10 Assistente IA** e selecione **Configurar chave**. O campo oculta a chave, que permanece somente na memória da sessão. A variável de ambiente `GROQ_API_KEY` também é aceita. O arquivo `.env.example` documenta o nome da variável. Defina a variável no ambiente ou use o campo da interface.
 
-Crie pelo menos um usuário e um acesso fictícios. Digite uma pergunta, revise o texto tratado e autorize o envio externo. A janela permanece utilizável enquanto aguarda a resposta. O botão **Limpar conversa** apaga o histórico visível e o contexto da sessão. O registro local de consultas permanece disponível.
+Crie pelo menos um usuário e um acesso fictícios. Digite uma pergunta, revise o texto tratado e autorize o envio externo. Na interface gráfica, a janela permanece utilizável enquanto aguarda a resposta. O botão **Limpar conversa** apaga o histórico visível e o contexto da sessão. O registro local de consultas permanece disponível.
 
 ## Dados enviados
 
@@ -26,7 +26,7 @@ A IA consulta dados. As regras de risco e as operações do cadastro continuam n
 
 ## Auditoria e erros
 
-O programa grava operação, pergunta tratada, data e hora, modelo e estado da tentativa em `dados/consultas_ia.jsonl`. A consulta começa com `INICIADA` e termina em `CONCLUIDA` ou `ERRO`. A opção **7 Auditoria → Consultas de IA** mostra esse arquivo. O registro inicial precisa ser gravado antes da requisição externa. Uma interrupção do processo pode deixar uma tentativa com o estado inicial.
+O programa grava operação, pergunta tratada, data e hora, modelo e estado da tentativa em `dados/consultas_ia.txt`. A consulta começa com `INICIADA` e termina em `CONCLUIDA` ou `ERRO`. O arquivo é texto simples: cada linha contém operação, pergunta tratada, data/hora, resultado e modelo, separados por tabulação. A opção **7 Auditoria** inclui essas consultas no terminal; na interface gráfica, use **7 Auditoria → Consultas de IA**. O registro inicial precisa ser gravado antes da requisição externa. Uma interrupção do processo pode deixar uma tentativa com o estado inicial.
 
 Chave ausente, dependência ausente, histórico vazio, erro de conexão e limite do provedor geram uma mensagem. A exceção bruta do serviço fica fora da interface para evitar exposição de credenciais. As consultas preservam usuários, acessos e classificações.
 

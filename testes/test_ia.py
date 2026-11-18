@@ -100,6 +100,24 @@ class TesteIA(unittest.TestCase):
         self.assertNotIn("credencial", str(resultado.exception))
         self.assertEqual(agente_ia.listar_consultas(self.pasta)[-1]["resultado"], "ERRO")
 
+    def test_auditoria_em_texto_e_linha_invalida(self):
+        pergunta = "Falhas | hoje?\tSegunda parte\nTerceira parte"
+        agente_ia.registrar_consulta(self.pasta, pergunta, "INICIADA")
+        caminho = os.path.join(self.pasta, "consultas_ia.txt")
+        with open(caminho, encoding="utf-8") as arquivo:
+            linhas = arquivo.readlines()
+        self.assertEqual(len(linhas), 1)
+        self.assertEqual(len(linhas[0].rstrip("\n").split("\t")), 5)
+        self.assertFalse(linhas[0].startswith("{"))
+        self.assertFalse(os.path.exists(os.path.join(self.pasta, "consultas_ia.jsonl")))
+        registro = agente_ia.listar_consultas(self.pasta)[0]
+        self.assertEqual(registro["pergunta"], "Falhas | hoje? Segunda parte Terceira parte")
+        self.assertEqual(registro["operacao"], "CONSULTA_IA")
+        with open(caminho, "a", encoding="utf-8") as arquivo:
+            arquivo.write("linha inválida\n")
+        with self.assertRaisesRegex(ValueError, "linha inválida"):
+            agente_ia.listar_consultas(self.pasta)
+
 
 if __name__ == "__main__":
     unittest.main()

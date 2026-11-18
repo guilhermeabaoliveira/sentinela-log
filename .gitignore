@@ -12,4 +12,5 @@ Thumbs.db
 /dados/execucao/
 /dados/estado.txt.tmp
 /dados/consultas_ia.jsonl
+/dados/consultas_ia.txt
 /dados/testes/

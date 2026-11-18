@@ -34,4 +34,4 @@ O sistema pode deixar de identificar:
 
 ## Dados e integração
 
-A integração de IA utiliza o módulo fornecido pela disciplina. A interface e as condições de uso estão descritas em [integração de IA](integracao_ia.md).
+A integração de IA consulta a Groq usando fatos selecionados e validados pelo sistema. A interface e as condições de uso estão descritas em [integração de IA](integracao_ia.md).
