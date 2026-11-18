@@ -18,20 +18,22 @@ class ChatIA:
         self.frame = tk.Frame(app.content, bg=s.BG)
         self.frame.pack(fill="both", expand=True)
         self.resultados = queue.Queue()
-        tk.Label(self.frame, text="Groq · GPT-OSS 120B · consultas de leitura",
-                 bg=s.BG, fg=s.PURPLE, font=(s.FONT, 11, "bold")).pack(anchor="w")
+        tk.Label(self.frame, text="Consulta de leitura aos registros",
+                 bg=s.BG, fg=s.TEXT, font=(s.FONT, 11, "bold")).pack(anchor="w")
         tk.Label(self.frame, text="A resposta usa fatos calculados pelo sistema. "
                  "Aliases U1 e M1 substituem usuários e máquinas.",
                  bg=s.BG, fg=s.MUTED, wraplength=740, justify="left").pack(anchor="w", pady=8)
         self.conversa = ScrolledText(self.frame, wrap="word", bg=s.CARD, fg=s.TEXT,
-                                    font=(s.FONT, 11), relief="flat", height=10)
+                                    font=(s.FONT, 11), relief="flat", height=10,
+                                    highlightthickness=1, highlightbackground=s.BORDER)
         self.conversa.pack(fill="both", expand=True, pady=8)
         self.conversa.configure(state="disabled")
         for pergunta, resposta in app.historico_ia:
             self.escrever("Você", pergunta)
             self.escrever("SentinelaLog", resposta)
         self.entrada = tk.Entry(self.frame, bg=s.FIELD, fg=s.TEXT,
-                                insertbackground=s.TEXT, font=(s.FONT, 11))
+                                insertbackground=s.TEXT, font=(s.FONT, 11), relief="flat",
+                                highlightthickness=1, highlightbackground=s.BORDER, highlightcolor=s.BLUE)
         self.entrada.pack(fill="x", ipady=10, pady=8)
         self.entrada.bind("<Return>", lambda evento: self.enviar())
         controles = tk.Frame(self.frame, bg=s.BG)

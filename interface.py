@@ -59,13 +59,13 @@ class SentinelaLogApp:
         self.page_title = tk.Label(
             topo, text="Painel inicial",
             bg=estilos.TOP, fg=estilos.TEXT,
-            font=(estilos.FONT, 16, "bold")
+            font=(estilos.FONT, 10)
         )
         self.page_title.pack(side="left", padx=28)
 
         tk.Label(
-            topo, text="●  SISTEMA LOCAL",
-            bg=estilos.TOP, fg=estilos.GREEN,
+            topo, text="Execução local",
+            bg=estilos.TOP, fg=estilos.MUTED,
             font=(estilos.FONT, 8, "bold")
         ).pack(side="right", padx=28)
 
@@ -76,7 +76,7 @@ class SentinelaLogApp:
         for item in self.content.winfo_children():
             item.destroy()
 
-        self.page_title.configure(text=titulo)
+        self.page_title.configure(text="Monitor de acessos")
         self.estado = armazenamento.carregar(PASTA)
         widgets.titulo(self.content, titulo, descricao)
 
@@ -158,7 +158,7 @@ class SentinelaLogApp:
 
         tk.Label(
             bloco,
-            text="As operações do menu original em uma interface gráfica.",
+            text="Selecione uma operação para continuar.",
             bg=estilos.BG, fg=estilos.MUTED,
             font=(estilos.FONT, 9)
         ).pack(anchor="w", pady=(3, 0))
@@ -185,7 +185,7 @@ class SentinelaLogApp:
             ).grid(
                 row=i // 2, column=i % 2,
                 sticky="ew", padx=(0, 10),
-                pady=5, ipady=4
+                pady=4, ipady=0
             )
 
         for coluna in range(2):
@@ -194,7 +194,7 @@ class SentinelaLogApp:
         tk.Label(
             self.content,
             text="Dados locais em dados/estado.txt. Utilize somente dados fictícios.",
-            bg=estilos.BG, fg="#71849d",
+            bg=estilos.BG, fg=estilos.MUTED,
             font=(estilos.FONT, 8)
         ).pack(anchor="w", pady=(12, 0))
 
@@ -252,7 +252,7 @@ class SentinelaLogApp:
         widgets.texto(
             self.content,
             "As matrículas são exibidas parcialmente por privacidade.",
-            cor="#71849d", fonte=8, bg=estilos.BG
+            cor=estilos.MUTED, fonte=8, bg=estilos.BG
         )
 
     def editar_usuario(self):
@@ -500,7 +500,7 @@ class SentinelaLogApp:
 
         for linha in relatorios.grafico(self.estado):
             widgets.texto(
-                corpo, linha, cor="#e5edf8",
+                corpo, linha, cor=estilos.TEXT,
                 familia="Consolas", fonte=10
             )
 

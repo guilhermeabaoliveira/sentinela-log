@@ -10,8 +10,13 @@ def criar(pai, colunas, larguras=None):
 
     tree = ttk.Treeview(frame, columns=colunas, show="headings")
 
+    titulos = {"matricula": "Matrícula", "nome": "Nome", "perfil": "Perfil",
+               "inicio": "Início", "fim": "Fim", "situacao": "Situação",
+               "id": "ID", "momento": "Data e hora", "maquina": "Máquina",
+               "resultado": "Resultado", "risco": "Risco", "motivos": "Motivos",
+               "operacao": "Operação", "afetado": "Usuário afetado", "pergunta": "Pergunta"}
     for i, coluna in enumerate(colunas):
-        tree.heading(coluna, text=coluna)
+        tree.heading(coluna, text=titulos.get(coluna, coluna))
         tree.column(
             coluna,
             width=larguras[i] if larguras else 130,
@@ -42,5 +47,6 @@ def criar(pai, colunas, larguras=None):
 
 
 def preencher(tree, linhas):
-    for linha in linhas:
-        tree.insert("", "end", values=linha)
+    tree.tag_configure("alternada", background="#f5f7fa")
+    for indice, linha in enumerate(linhas):
+        tree.insert("", "end", values=linha, tags=("alternada",) if indice % 2 else ())

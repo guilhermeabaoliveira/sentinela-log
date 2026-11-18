@@ -1,18 +1,22 @@
-
-BG = "#0b1220"
-PANEL = "#111c2e"
-CARD = "#142238"
-TOP = "#0f1929"
-FIELD = "#0d1727"
-BORDER = "#263750"
-TEXT = "#f0f6ff"
-MUTED = "#8293aa"
-BLUE = "#55c7ff"
-GREEN = "#65d6a4"
-RED = "#ff8795"
-PURPLE = "#a78bfa"
-YELLOW = "#f5c66b"
+BG = "#f5f6f8"
+PANEL = "#ffffff"
+CARD = "#ffffff"
+TOP = "#ffffff"
+FIELD = "#ffffff"
+BORDER = "#d8dde4"
+TEXT = "#202833"
+MUTED = "#596575"
+BLUE = "#285d91"
+GREEN = "#28734b"
+RED = "#a33232"
+PURPLE = BLUE
+YELLOW = "#805b16"
 FONT = "Segoe UI"
+NAV = "#252c35"
+NAV_TEXT = "#e4e8ee"
+NAV_MUTED = "#afb8c4"
+NAV_ACTIVE = "#3b4859"
+BUTTON = "#e8ecf1"
 
 
 def configurar(root):
@@ -20,32 +24,17 @@ def configurar(root):
 
     style = ttk.Style(root)
     style.theme_use("clam")
-    style.configure(
-        "Treeview",
-        background=PANEL,
-        foreground="#e5edf8",
-        fieldbackground=PANEL,
-        rowheight=34,
-        borderwidth=0,
-        font=(FONT, 10)
-    )
-    style.configure(
-        "Treeview.Heading",
-        background="#1b2a40",
-        foreground="#9bdcff",
-        font=(FONT, 9, "bold"),
-        relief="flat",
-        padding=9
-    )
-    style.map(
-        "Treeview",
-        background=[("selected", "#24476b")],
-        foreground=[("selected", "#ffffff")]
-    )
-    style.configure(
-        "TCombobox",
-        fieldbackground=PANEL,
-        background="#1b2a40",
-        foreground="#ffffff",
-        arrowcolor=BLUE
-    )
+    style.configure("Treeview", background=CARD, foreground=TEXT,
+                    fieldbackground=CARD, rowheight=36, borderwidth=0,
+                    font=(FONT, 10))
+    style.configure("Treeview.Heading", background="#e9edf2", foreground=TEXT,
+                    font=(FONT, 10, "bold"), relief="flat", padding=10)
+    style.map("Treeview", background=[("selected", "#dbe7f3")],
+              foreground=[("selected", "#173b60")])
+    style.configure("TCombobox", fieldbackground=FIELD, background=BUTTON,
+                    foreground=TEXT, arrowcolor=MUTED, padding=5)
+    style.map("TCombobox", fieldbackground=[("readonly", FIELD)],
+              foreground=[("readonly", TEXT)], selectbackground=[("readonly", FIELD)],
+              selectforeground=[("readonly", TEXT)])
+    style.configure("TScrollbar", background="#c5ccd5", troughcolor=BG,
+                    borderwidth=0, arrowcolor=MUTED)

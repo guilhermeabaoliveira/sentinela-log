@@ -40,7 +40,7 @@ def abrir(root, titulo, campos, confirmar, callback, tamanho="500x650"):
 
         tk.Label(
             bloco, text=nome, bg=s.CARD,
-            fg="#a9bad0", font=(s.FONT, 9, "bold")
+            fg=s.TEXT, font=(s.FONT, 9, "bold")
         ).pack(anchor="w", pady=(0, 5))
 
         if tipo == "combo":
@@ -52,8 +52,9 @@ def abrir(root, titulo, campos, confirmar, callback, tamanho="500x650"):
         else:
             entrada = tk.Entry(
                 bloco, bg=s.FIELD, fg=s.TEXT,
-                insertbackground="#ffffff",
-                relief="flat", font=(s.FONT, 10)
+                insertbackground=s.TEXT,
+                relief="flat", highlightthickness=1, highlightbackground=s.BORDER,
+                highlightcolor=s.BLUE, font=(s.FONT, 10)
             )
             entrada.pack(fill="x", ipady=9)
             if valor:
