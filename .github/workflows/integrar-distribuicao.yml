@@ -1,5 +1,4 @@
-
-name: Integrar distribuicao Windows
+name: Integrar distribuicao Windows na raiz
 
 on:
   workflow_dispatch:
@@ -9,53 +8,163 @@ permissions:
 
 jobs:
   integrar:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
         with:
           ref: main
 
-      - name: Baixar release definitiva
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Validar e mover distribuicao
+        shell: pwsh
         run: |
-          mkdir -p "$RUNNER_TEMP/pacote"
-          gh release download v2026.11.24-windows \
-            --repo "$GITHUB_REPOSITORY" \
-            --pattern "SentinelaLog-Windows-x64.zip" \
-            --pattern "SentinelaLog-Windows-x64.sha256" \
-            --dir "$RUNNER_TEMP/pacote"
+          $ErrorActionPreference = "Stop"
+          $origem = "distribuicao-windows"
 
-      - name: Conferir integridade
+          $itens = @(
+              "SentinelaLog.exe",
+              "_internal",
+              "licencas",
+              "codigo-fonte",
+              "LEIA-ME.txt",
+              "VERSOES.txt"
+          )
+
+          foreach ($item in $itens) {
+              if (-not (Test-Path "$origem/$item")) {
+                  throw "Componente ausente: $item"
+              }
+
+              if (Test-Path $item) {
+                  throw "Conflito na raiz: $item"
+              }
+          }
+
+          $esperados = $itens + @("dados")
+
+          $extras = @(Get-ChildItem $origem -Force |
+              Where-Object { $_.Name -notin $esperados })
+
+          if ($extras.Count -gt 0) {
+              throw "Arquivos adicionais exigem revisao."
+          }
+
+          $dadosPacote = @(Get-ChildItem "$origem/dados" -Force)
+
+          if ($dadosPacote.Count -ne 1 -or
+              $dadosPacote[0].Name -ne "bloqueadas.txt") {
+              throw "Conteudo inesperado na pasta dados."
+          }
+
+          $a = (Get-Content "dados/bloqueadas.txt" -Raw).Trim()
+          $b = (Get-Content "$origem/dados/bloqueadas.txt" -Raw).Trim()
+
+          if ($a -cne $b) {
+              throw "Conflito na lista de maquinas bloqueadas."
+          }
+
+          $hashAntes = (Get-FileHash "$origem/SentinelaLog.exe").Hash
+
+          foreach ($item in $itens) {
+              git mv -- "$origem/$item" "$item"
+
+              if ($LASTEXITCODE -ne 0) {
+                  throw "Falha ao mover $item"
+              }
+          }
+
+          git rm -r -- "$origem/dados"
+
+          if ($LASTEXITCODE -ne 0) {
+              throw "Falha ao remover dados duplicados."
+          }
+
+          $hashDepois = (Get-FileHash "SentinelaLog.exe").Hash
+
+          if ($hashAntes -ne $hashDepois) {
+              throw "Executavel foi alterado indevidamente."
+          }
+
+          git diff --cached --quiet -- dados components docs testes main.py interface.py agente_ia.py
+
+          if ($LASTEXITCODE -ne 0) {
+              throw "Arquivos originais foram alterados."
+          }
+
+          Write-Host "Migracao estrutural validada."
+
+      - name: Testar executavel na estrutura final
+        shell: pwsh
         run: |
-          cd "$RUNNER_TEMP/pacote"
-          sha256sum -c SentinelaLog-Windows-x64.sha256
+          $ErrorActionPreference = "Stop"
 
-      - name: Integrar executavel e dependencias
-        run: |
-          unzip -q "$RUNNER_TEMP/pacote/SentinelaLog-Windows-x64.zip" \
-            -d "$RUNNER_TEMP/extraido"
+          $tree = git write-tree
 
-          origem="$RUNNER_TEMP/extraido/SentinelaLog"
+          if ($LASTEXITCODE -ne 0) {
+              throw "Falha ao preparar arvore."
+          }
 
-          test -f "$origem/SentinelaLog.exe"
-          test -d "$origem/_internal"
-          test -d "$origem/licencas"
-          test -d "$origem/codigo-fonte"
-          test -d "$origem/dados"
-          test -f "$origem/LEIA-ME.txt"
-          test -f "$origem/VERSOES.txt"
+          $zip = Join-Path $env:RUNNER_TEMP "teste-raiz.zip"
+          $teste = Join-Path $env:RUNNER_TEMP "sl-teste"
 
-          test ! -e distribuicao-windows
-          mkdir distribuicao-windows
-          cp -a "$origem/." distribuicao-windows/
+          git archive --format=zip -o $zip $tree
 
-      - name: Publicar distribuicao na main
+          if ($LASTEXITCODE -ne 0) {
+              throw "Falha ao gerar ZIP de teste."
+          }
+
+          Expand-Archive -Path $zip -DestinationPath $teste
+
+          $exe = Join-Path $teste "SentinelaLog.exe"
+
+          $processo = Start-Process `
+              -FilePath $exe `
+              -WorkingDirectory $teste `
+              -PassThru
+
+          try {
+              $abriu = $false
+
+              for ($i = 0; $i -lt 30; $i++) {
+                  Start-Sleep -Seconds 1
+                  $processo.Refresh()
+
+                  if ($processo.HasExited) {
+                      throw "Executavel encerrou durante o teste."
+                  }
+
+                  if ($processo.MainWindowTitle -like "*SentinelaLog*Gerenciamento de Acessos*") {
+                      $abriu = $true
+                      break
+                  }
+              }
+
+              if (-not $abriu) {
+                  throw "Janela principal nao confirmada."
+              }
+
+              Write-Host "Executavel aberto corretamente na raiz."
+          }
+          finally {
+              if (-not $processo.HasExited) {
+                  Stop-Process -Id $processo.Id -Force
+              }
+          }
+
+      - name: Publicar migracao validada
+        shell: pwsh
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add -f -- distribuicao-windows/
-          git commit -m "build: integra distribuicao Windows ao repositorio"
+          git commit -m "build: disponibiliza executavel Windows na raiz"
+
+          if ($LASTEXITCODE -ne 0) {
+              throw "Falha no commit."
+          }
+
           git push origin main
+
+          if ($LASTEXITCODE -ne 0) {
+              throw "Falha no push."
+          }
