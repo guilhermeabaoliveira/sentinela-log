@@ -43,7 +43,7 @@ O sistema mantém persistência entre execuções e um gráfico textual da distr
 | relatorios.py | Resumos e indicadores de segurança |
 | dados/ | Estado local em TXT e lista de origens bloqueadas |
 | testes/ | Verificações do menu, regras de risco e integração de IA |
-| docs/ | Manual, escopo, modelo de dados e limites de segurança |
+| docs/ | Manual, escopo, modelo de dados, limites de segurança, relatório de desenvolvimento, documentação técnica e FAQ |
 | requirements.txt | Dependência da integração Groq |
 
 ## Abrir no Windows sem instalar Python
@@ -79,7 +79,7 @@ Para executar pelo terminal, use `python main.py --terminal`. Na interface gráf
 
 A interface abre em **tema escuro**. O botão no canto superior direito alterna para **Tema claro** e, depois, **Tema escuro**. A escolha vale para a sessão. Botões e itens do menu respondem ao mouse e ao foco do teclado; a página selecionada permanece marcada.
 
-O [manual](docs/manual.md) apresenta instalação, cadastro, demonstração local, configuração da chave e solução de problemas. A [integração de IA](docs/integracao_ia.md) descreve os dados enviados, os limites e os testes de segurança.
+O [manual](docs/manual.md) apresenta instalação, cadastro, demonstração local, configuração da chave e solução de problemas. A [integração de IA](docs/integracao_ia.md) descreve os dados enviados, os limites e os testes de segurança. O [relatório de desenvolvimento](docs/relatorio_desenvolvimento.md) conta como o projeto foi feito, a [documentação técnica](docs/documentacao_tecnica.md) explica a lógica da programação e o [FAQ](docs/faq.md) responde às dúvidas mais prováveis. O [histórico de versões](CHANGELOG.md) registra o que foi melhorado desde a entrega.
 
 ## Verificação
 
