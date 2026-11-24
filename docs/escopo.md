@@ -34,7 +34,7 @@ A funcionalidade extra é o gráfico textual da distribuição dos riscos. A [in
 
 ## Requisitos técnicos
 
-Python pelo terminal, organização em funções, tratamento de exceções e legibilidade. Bibliotecas expressamente admitidas: os, datetime e random. Outras dependências exigem consulta aos professores.
+Python pelo terminal, organização em funções, tratamento de exceções e legibilidade. Bibliotecas expressamente admitidas: os, datetime e random. Outras dependências exigem consulta aos professores. Na implementação, o núcleo (usuários, acessos, risco, armazenamento e relatórios) usa apenas `os` e `datetime`, e o `main.py` acrescenta `sys` para reconhecer o executável. O Tkinter (janela gráfica) e a biblioteca `groq` (integração de IA) são camadas adicionais, cada uma em módulos próprios, e o modo terminal (`python main.py --terminal`) funciona sem elas.
 
 Usar somente dados fictícios. A documentação de uso abrange restrições, critérios de classificação e justificativas de segurança.
 
