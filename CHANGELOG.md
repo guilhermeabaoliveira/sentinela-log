@@ -1,5 +1,27 @@
 # Histórico de versões
 
+## 2026-11-23 — Desde a entrega via Classroom
+
+Registro do que foi melhorado depois da entrega. O código-fonte e o executável entregues não foram alterados: as melhorias são de documentação e de organização do material de apresentação.
+
+### Documentação nova
+
+- `docs/relatorio_desenvolvimento.md`: relatório de desenvolvimento com visão geral, ideação, ferramentas, planejamento, divisão de responsabilidades, desafios e reflexão do grupo.
+- `docs/documentacao_tecnica.md`: lógica da programação, módulo a módulo, com o diagrama de arquitetura, o ciclo de cada operação do menu, as regras de negócio, a gravação segura e o assistente de IA.
+- `docs/faq.md`: respostas para as dúvidas mais prováveis (proposta, funcionamento, IA, executável, GitHub, trabalho em grupo), incluindo o que o sistema não detecta.
+
+### Documentação revisada
+
+- `docs/escopo.md`: os requisitos técnicos passam a dizer o que o núcleo usa (`os`, `datetime` e `sys`) e que Tkinter e `groq` são camadas adicionais em módulos próprios, com o modo terminal funcionando sem elas.
+- `docs/transparencia.md`: o texto sobre os registros da entrega passa a falar de documentação das decisões e histórico dos prompts, sem prometer comentários no código.
+- `README.md`: a lista de documentos e o resumo de `docs/` incluem os novos arquivos.
+- Decisões de distribuição registradas: o Docker foi retirado (já constava abaixo) e uma versão web com servidor, que guardaria a chave da IA, foi avaliada e descartada por exigir login, limite de chamadas e interface web além do pedido.
+
+### O que não mudou
+
+- Nenhum arquivo `.py` do programa, nenhum teste e nenhum dado foram alterados.
+- O executável da release `v2026.11.18-final.2` continua sendo o entregue.
+
 ## 2026-11-18
 
 - Interface Tkinter com tema escuro inicial e alternância para tema claro.
