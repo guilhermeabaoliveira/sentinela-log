@@ -1,0 +1,27 @@
+SentinelaLog - Windows 64 bits
+
+1. Extract the entire ZIP.
+2. Open the SentinelaLog folder.
+3. Run SentinelaLog.exe.
+
+Mantenha as pastas _internal e dados junto ao executavel.
+Nao e necessario instalar Python.
+
+As consultas rapidas funcionam localmente, sem internet
+e sem chave Groq.
+
+O assistente em linguagem natural continua disponivel.
+Para utiliza-lo, configure sua propria chave Groq.
+
+MAQ-X: exemplo exclusivamente didatico para apresentacao.
+
+Nenhuma chave API acompanha esta distribuicao.
+Use somente dados ficticios.
+
+O executavel nao possui assinatura digital de editor.
+
+codigo-fonte: modulos Python e documentacao.
+licencas: licencas das dependencias.
+VERSOES.txt: versoes do ambiente de compilacao.
+
+https://github.com/guilhermeabaoliveira/sentinela-log
