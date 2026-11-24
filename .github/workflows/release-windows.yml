@@ -3,9 +3,14 @@ name: Build Windows Release
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Windows release tag'
+        required: true
+        type: string
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -59,7 +64,225 @@ jobs:
           Copy-Item "dados" "$destino\codigo-fonte\" -Recurse
           Get-ChildItem "$destino\codigo-fonte\dados" -Force | Where-Object Name -ne "bloqueadas.txt" | Remove-Item -Recurse -Force
 
-          Compress-Archive -Path $destino -DestinationPath SentinelaLog-Windows-x64.zip -Force
+      - name: Collect distribution licenses
+        shell: pwsh
+        run: |
+          @'
+          import sys
+          import shutil
+          import importlib.metadata as metadata
+          from pathlib import Path
+
+          destino = Path("dist/SentinelaLog")
+          licencas = destino / "licencas"
+          licencas.mkdir(exist_ok=True)
+
+          python_license = Path(sys.base_prefix) / "LICENSE.txt"
+
+          if not python_license.is_file():
+              raise RuntimeError("Python license not found")
+
+          shutil.copy2(
+              python_license,
+              licencas / "Python-LICENSE.txt"
+          )
+
+          versoes = ["Python " + sys.version.split()[0]]
+          ausentes = []
+
+          for dist in metadata.distributions():
+              nome = dist.metadata["Name"]
+              versoes.append(f"{nome}=={dist.version}")
+              encontrados = 0
+
+              for item in dist.files or []:
+                  caminho = Path(str(item))
+                  partes = caminho.parts
+                  nome_arq = caminho.name.lower()
+
+                  if ".." in partes or caminho.is_absolute():
+                      continue
+
+                  if caminho.suffix.lower() in (".py", ".pyc", ".pyd"):
+                      continue
+
+                  valido = (
+                      nome_arq.startswith((
+                          "license", "licence", "copying",
+                          "notice", "copyright"
+                      ))
+                      or "licenses" in partes
+                  )
+
+                  origem = Path(dist.locate_file(item))
+
+                  if valido and origem.is_file():
+                      saida = licencas / nome / caminho
+                      saida.parent.mkdir(parents=True, exist_ok=True)
+                      shutil.copy2(origem, saida)
+                      encontrados += 1
+
+              if not encontrados:
+                  ausentes.append(nome)
+
+          if ausentes:
+              raise RuntimeError(
+                  "Licenses not found: " + ", ".join(ausentes)
+              )
+
+          for origem in (destino / "_internal").rglob("license.terms"):
+              relativo = origem.relative_to(destino / "_internal")
+              saida = licencas / "Tcl-Tk" / relativo
+              saida.parent.mkdir(parents=True, exist_ok=True)
+              shutil.copy2(origem, saida)
+
+          (destino / "VERSOES.txt").write_text(
+              "\n".join(sorted(versoes)) + "\n",
+              encoding="utf-8"
+          )
+
+          print("License collection completed.")
+          '@ | python -
+
+          if ($LASTEXITCODE -ne 0) {
+              throw "License collection failed."
+          }
+
+      - name: Restore portable documentation
+        shell: pwsh
+        run: |
+          @'
+          SentinelaLog - Windows 64 bits
+
+          1. Extract the entire ZIP.
+          2. Open the SentinelaLog folder.
+          3. Run SentinelaLog.exe.
+
+          Mantenha as pastas _internal e dados junto ao executavel.
+          Nao e necessario instalar Python.
+
+          As consultas rapidas funcionam localmente, sem internet
+          e sem chave Groq.
+
+          O assistente em linguagem natural continua disponivel.
+          Para utiliza-lo, configure sua propria chave Groq.
+
+          MAQ-X: exemplo exclusivamente didatico para apresentacao.
+
+          Nenhuma chave API acompanha esta distribuicao.
+          Use somente dados ficticios.
+
+          O executavel nao possui assinatura digital de editor.
+
+          codigo-fonte: modulos Python e documentacao.
+          licencas: licencas das dependencias.
+          VERSOES.txt: versoes do ambiente de compilacao.
+
+          https://github.com/guilhermeabaoliveira/sentinela-log
+          '@ | Set-Content "dist/SentinelaLog/LEIA-ME.txt" -Encoding utf8
+
+          Get-ChildItem "dist/SentinelaLog/codigo-fonte" `
+            -Directory -Filter "__pycache__" -Recurse |
+            Remove-Item -Recurse -Force
+
+      - name: Validate quick queries
+        shell: pwsh
+        run: |
+          @'
+          import copy
+          import armazenamento
+          import usuarios
+          import acessos
+          from components.chat_ia import ChatIA
+
+          estado = armazenamento.vazio()
+
+          u1 = usuarios.cadastrar(
+              estado, "900100", "Pessoa Exemplo",
+              "estudante", "07:00", "18:00", ""
+          )
+
+          u2 = usuarios.cadastrar(
+              estado, "900200", "Pessoa Teste",
+              "professor", "07:00", "18:00", ""
+          )
+
+          acessos.registrar(
+              estado, u1, "2026-11-24 10:00",
+              "MAQ-X", "sucesso", ["MAQ-X"]
+          )
+
+          acessos.registrar(
+              estado, u2, "2026-11-24 03:00",
+              "MAQ-X", "falha", ["MAQ-X"]
+          )
+
+          original = copy.deepcopy(estado)
+
+          consultas = [
+              "total_acessos", "falhas", "criticos",
+              "riscos", "maq_x", "motivos_maq_x",
+              "compartilhadas", "total_usuarios",
+              "perfis", "resumo"
+          ]
+
+          for consulta in consultas:
+              resposta = ChatIA.calcular_consulta_local(
+                  estado, consulta
+              )
+
+              assert isinstance(resposta, str) and resposta
+              assert "900100" not in resposta
+              assert "900200" not in resposta
+              assert estado == original
+
+              vazio = ChatIA.calcular_consulta_local(
+                  armazenamento.vazio(), consulta
+              )
+
+              assert isinstance(vazio, str) and vazio
+
+              print("OK:", consulta)
+
+          print("All ten local queries passed.")
+          '@ | python -
+
+          if ($LASTEXITCODE -ne 0) {
+              throw "Quick query validation failed."
+          }
+
+      - name: Package and verify Windows distribution
+        shell: pwsh
+        run: |
+          $destino = "dist/SentinelaLog"
+
+          $obrigatorios = @(
+              "SentinelaLog.exe",
+              "_internal",
+              "dados/bloqueadas.txt",
+              "licencas/Python-LICENSE.txt",
+              "LEIA-ME.txt",
+              "VERSOES.txt",
+              "codigo-fonte/components/chat_ia.py",
+              "codigo-fonte/docs/SentinelaLog_Explainer.pdf"
+          )
+
+          foreach ($item in $obrigatorios) {
+              if (-not (Test-Path "$destino/$item")) {
+                  throw "Missing package component: $item"
+              }
+          }
+
+          Compress-Archive -Path $destino `
+            -DestinationPath SentinelaLog-Windows-x64.zip -Force
+
+          $hash = (
+              Get-FileHash SentinelaLog-Windows-x64.zip -Algorithm SHA256
+          ).Hash.ToLower()
+
+          "$hash  SentinelaLog-Windows-x64.zip" |
+            Set-Content SentinelaLog-Windows-x64.sha256 -Encoding ascii
+
 
       - name: Upload Windows package
         uses: actions/upload-artifact@v4
@@ -67,3 +290,39 @@ jobs:
           name: SentinelaLog-Windows-x64
           path: SentinelaLog-Windows-x64.zip
           if-no-files-found: error
+
+      - name: Prepare definitive GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          $notas = @"
+          ## Novidades
+
+          - Dez consultas deterministicas de somente leitura.
+          - Consultas rapidas independentes da internet e da API Groq.
+          - Integracao original com a Groq preservada.
+          - Exemplo MAQ-X exclusivamente didatico.
+          - Aviso visual de operacoes nao permitidas.
+          - Executavel, codigo-fonte, documentacao e licencas.
+          - Arquivo SHA-256 para verificacao de integridade.
+
+          ## Windows
+
+          Extraia todo o ZIP e execute SentinelaLog.exe.
+          Nao e necessario instalar Python.
+          "@
+
+          gh release create $env:RELEASE_TAG `
+            SentinelaLog-Windows-x64.zip `
+            SentinelaLog-Windows-x64.sha256 `
+            --repo $env:GITHUB_REPOSITORY `
+            --target $env:GITHUB_SHA `
+            --title "SentinelaLog - Windows x64" `
+            --notes $notas `
+            --draft
+
+          if ($LASTEXITCODE -ne 0) {
+              throw "Release creation failed."
+          }
