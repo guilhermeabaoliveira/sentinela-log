@@ -6,7 +6,7 @@ A equipe utilizou assistência de IA no desenvolvimento e na documentação do p
 
 ## Registros da entrega
 
-O plano de ensino exige comentários explicando decisões e histórico dos prompts no projeto final. Esses registros são mantidos separadamente para compor a entrega acadêmica; este resumo não os substitui.
+O plano de ensino exige a documentação das decisões e o histórico dos prompts no projeto final. As decisões do projeto estão registradas em `docs/`, em especial no [relatório de desenvolvimento](relatorio_desenvolvimento.md) e na [documentação técnica](documentacao_tecnica.md). Esses registros são mantidos separadamente para compor a entrega acadêmica; este resumo não os substitui.
 
 ## Integração na aplicação
 
