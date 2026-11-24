@@ -7,6 +7,9 @@ from tkinter.scrolledtext import ScrolledText
 
 import agente_ia
 import armazenamento
+import acessos
+import usuarios
+import relatorios
 from . import estilos as s
 from .widgets import botao
 
@@ -46,6 +49,292 @@ class ChatIA:
         self.status = tk.Label(self.frame, text="Pronto. Exemplo: quantas falhas foram registradas?",
                                bg=s.BG, fg=s.MUTED, anchor="w", wraplength=740)
         self.status.pack(fill="x", pady=10)
+        self.criar_consultas_rapidas()
+        
+    def criar_consultas_rapidas(self):
+        tk.Label(
+            self.frame,
+            text="Consultas rápidas — execução local",
+            bg=s.BG, fg=s.TEXT,
+            font=(s.FONT, 10, "bold")
+        ).pack(anchor="w")
+
+        painel = tk.Frame(self.frame, bg=s.BG)
+        painel.pack(fill="x", pady=(4, 6))
+
+        grupos = [
+            ("Consulta de acessos", [
+                ("Quantos acessos foram registrados?", "total_acessos"),
+                ("Quais acessos tiveram falhas?", "falhas"),
+                ("Quais acessos são críticos?", "criticos"),
+                ("Resuma os acessos por nível de risco.", "riscos")
+            ]),
+            ("Exemplo MAQ-X", [
+                ("Quais acessos vieram da MAQ-X?", "maq_x"),
+                ("Por que o acesso da MAQ-X é crítico?", "motivos_maq_x"),
+                ("Há máquinas compartilhadas?", "compartilhadas")
+            ]),
+            ("Consulta de usuários", [
+                ("Quantos usuários estão cadastrados?", "total_usuarios"),
+                ("Quais são os perfis dos usuários?", "perfis"),
+                ("Resuma os registros disponíveis.", "resumo")
+            ])
+        ]
+
+        for titulo, perguntas in grupos:
+            botao(
+                painel, titulo + " ▾",
+                lambda t=titulo, p=perguntas:
+                    self.abrir_consultas_rapidas(t, p)
+            ).pack(side="left", padx=(0, 8))
+
+        aviso = tk.Label(
+            self.frame,
+            text=(
+                "OPERAÇÕES NÃO PERMITIDAS: "
+                "Cadastrar uma matrícula | "
+                "Editar uma matrícula ou cadastro | "
+                "Excluir uma matrícula ou cadastro."
+            ),
+            bg=s.BG, fg=s.RED,
+            font=(s.FONT, 9),
+            justify="left", anchor="w"
+        )
+        aviso.pack(fill="x", pady=(2, 6))
+
+        aviso.bind(
+            "<Configure>",
+            lambda evento: aviso.configure(
+                wraplength=max(1, evento.width - 8)
+            )
+        )
+
+    def abrir_consultas_rapidas(self, titulo, perguntas):
+        anterior = getattr(self, "_janela_consultas", None)
+
+        if anterior is not None and anterior.winfo_exists():
+            anterior.destroy()
+
+        janela = tk.Toplevel(self.frame)
+        self._janela_consultas = janela
+        janela.title("SentinelaLog — " + titulo)
+        janela.configure(bg=s.BG)
+        janela.transient(self.app.root)
+        janela.resizable(False, False)
+
+        painel = tk.Frame(janela, bg=s.BG, padx=16, pady=16)
+        painel.pack(fill="both", expand=True)
+
+        tk.Label(
+            painel, text=titulo,
+            bg=s.BG, fg=s.TEXT,
+            font=(s.FONT, 12, "bold")
+        ).pack(anchor="w")
+
+        tk.Label(
+            painel,
+            text="Consulta local, independente da API Groq.",
+            bg=s.BG, fg=s.MUTED,
+            font=(s.FONT, 10)
+        ).pack(anchor="w", pady=(4, 10))
+
+        def selecionar(pergunta, consulta):
+            janela.destroy()
+            self.consulta_local(pergunta, consulta)
+
+        for pergunta, consulta in perguntas:
+            botao(
+                painel, pergunta,
+                lambda p=pergunta, c=consulta: selecionar(p, c)
+            ).pack(fill="x", pady=3)
+
+        botao(
+            painel, "Fechar", janela.destroy
+        ).pack(anchor="e", pady=(10, 0))
+
+        janela.bind("<Escape>", lambda evento: janela.destroy())
+        janela.focus_set()
+
+    def consulta_local(self, pergunta, consulta):
+        try:
+            estado = armazenamento.carregar(self.pasta)
+            resposta = self.calcular_consulta_local(estado, consulta)
+
+            self.escrever("Você | Consulta local", pergunta)
+            self.escrever("SentinelaLog | Consulta local", resposta)
+
+            self.status.configure(
+                text="Consulta local concluída sem utilizar IA."
+            )
+
+        except (ValueError, OSError) as erro:
+            messagebox.showerror(
+                "Consulta local", str(erro),
+                parent=self.app.root
+            )
+
+    @staticmethod
+    def calcular_consulta_local(estado, consulta):
+        eventos = acessos.consultar(estado)
+        resumo = relatorios.resumir(estado)
+        cadastrados = estado["usuarios"]
+        ativos = usuarios.ativos(estado)
+
+        aliases = {
+            u["matricula"]: "U" + str(i)
+            for i, u in enumerate(cadastrados, 1)
+        }
+
+        maquinas = {}
+        for evento in eventos:
+            maquina = evento["maquina"]
+            if maquina not in maquinas:
+                maquinas[maquina] = "M" + str(len(maquinas) + 1)
+
+        permitidos = [
+            "Falha de acesso",
+            "Fora do horário permitido",
+            "Origem bloqueada: aviso obrigatório",
+            "Dentro das regras locais"
+        ]
+
+        def formatar(evento):
+            usuario = aliases.get(evento["matricula"], "U?")
+            maquina = maquinas[evento["maquina"]]
+
+            if evento["maquina"] == "MAQ-X":
+                maquina += " (MAQ-X)"
+
+            motivos = [
+                motivo for motivo in permitidos
+                if motivo in evento["motivos"].split("; ")
+            ]
+
+            return (
+                f'Evento {evento["id"]} | {evento["momento"]}\n'
+                f'Usuário: {usuario} | Máquina: {maquina}\n'
+                f'Resultado: {evento["resultado"]}\n'
+                f'Risco: {evento["risco"].upper()}\n'
+                'Motivos: ' +
+                ("; ".join(motivos) or "Não disponível.")
+            )
+
+        def listar(registros):
+            return "\n\n".join(
+                formatar(e) for e in registros
+            ) or "Nenhum registro encontrado."
+
+        def resumo_riscos():
+            contagem = relatorios.contar(eventos, "risco")
+            return [
+                f'Normais: {contagem.get("normal", 0)}',
+                f'Suspeitos: {contagem.get("suspeito", 0)}',
+                f'Críticos: {contagem.get("critico", 0)}'
+            ]
+
+        if consulta == "total_acessos":
+            return f'Total de acessos: {resumo["acessos"]}'
+
+        if consulta == "falhas":
+            registros = [
+                e for e in eventos
+                if e["resultado"] == "falha"
+            ]
+            return (
+                f'Total de falhas: {len(registros)}\n\n'
+                + listar(registros)
+            )
+
+        if consulta == "criticos":
+            registros = [
+                e for e in eventos
+                if e["risco"] == "critico"
+            ]
+            return (
+                f'Total de acessos críticos: {len(registros)}\n\n'
+                + listar(registros)
+            )
+
+        if consulta == "riscos":
+            return "\n".join(resumo_riscos())
+
+        if consulta == "maq_x":
+            registros = acessos.por_maquina(estado, "MAQ-X")
+            return (
+                f'Acessos da MAQ-X: {len(registros)}\n\n'
+                + listar(registros)
+            )
+
+        if consulta == "motivos_maq_x":
+            registros = [
+                e for e in acessos.por_maquina(estado, "MAQ-X")
+                if e["risco"] == "critico"
+            ]
+
+            if not registros:
+                return "Nenhum acesso crítico da MAQ-X registrado."
+
+            return (
+                "Motivos registrados nos acessos críticos "
+                "da MAQ-X:\n\n"
+                + listar(registros)
+                + "\n\nClassificação preservada conforme as "
+                  "regras aplicadas no momento do registro."
+            )
+
+        if consulta == "compartilhadas":
+            compartilhadas = acessos.compartilhadas(estado)
+
+            if not compartilhadas:
+                return "Nenhuma máquina compartilhada encontrada."
+
+            linhas = []
+            for maquina, matriculas in compartilhadas.items():
+                nome = maquinas[maquina]
+
+                if maquina == "MAQ-X":
+                    nome += " (MAQ-X)"
+
+                linhas.append(
+                    f'{nome}: {len(matriculas)} usuários distintos'
+                )
+
+            return (
+                f'Máquinas compartilhadas: {len(compartilhadas)}\n\n'
+                + "\n".join(linhas)
+                + "\n\nCompartilhamento não identifica autoria."
+            )
+
+        if consulta == "total_usuarios":
+            return "\n".join([
+                f'Total de cadastros: {len(cadastrados)}',
+                f'Usuários ativos: {len(ativos)}',
+                f'Cadastros excluídos: {len(cadastrados) - len(ativos)}'
+            ])
+
+        if consulta == "perfis":
+            contagem = relatorios.contar(ativos, "perfil")
+            return "\n".join(
+                f'{perfil.capitalize()}: {contagem.get(perfil, 0)}'
+                for perfil in usuarios.PERFIS
+            )
+
+        if consulta == "resumo":
+            return "\n".join([
+                f'Usuários cadastrados: {len(cadastrados)}',
+                f'Usuários ativos: {len(ativos)}',
+                f'Total de acessos: {resumo["acessos"]}',
+                f'Total de falhas: {resumo["falhas"]}',
+                *resumo_riscos(),
+                "Horários de pico: " +
+                (", ".join(resumo["pico"]) or "nenhum"),
+                "Máquinas compartilhadas: " +
+                str(len(acessos.compartilhadas(estado)))
+            ])
+
+        raise ValueError("Consulta local desconhecida.")
+
+
 
     def escrever(self, autor, texto):
         self.conversa.configure(state="normal")
