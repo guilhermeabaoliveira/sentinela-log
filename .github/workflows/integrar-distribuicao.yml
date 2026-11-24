@@ -1,0 +1,61 @@
+
+name: Integrar distribuicao Windows
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  integrar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Baixar release definitiva
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/pacote"
+          gh release download v2026.11.24-windows \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern "SentinelaLog-Windows-x64.zip" \
+            --pattern "SentinelaLog-Windows-x64.sha256" \
+            --dir "$RUNNER_TEMP/pacote"
+
+      - name: Conferir integridade
+        run: |
+          cd "$RUNNER_TEMP/pacote"
+          sha256sum -c SentinelaLog-Windows-x64.sha256
+
+      - name: Integrar executavel e dependencias
+        run: |
+          unzip -q "$RUNNER_TEMP/pacote/SentinelaLog-Windows-x64.zip" \
+            -d "$RUNNER_TEMP/extraido"
+
+          origem="$RUNNER_TEMP/extraido/SentinelaLog"
+
+          test -f "$origem/SentinelaLog.exe"
+          test -d "$origem/_internal"
+          test -d "$origem/licencas"
+          test -d "$origem/codigo-fonte"
+          test -d "$origem/dados"
+          test -f "$origem/LEIA-ME.txt"
+          test -f "$origem/VERSOES.txt"
+
+          test ! -e distribuicao-windows
+          mkdir distribuicao-windows
+          cp -a "$origem/." distribuicao-windows/
+
+      - name: Publicar distribuicao na main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -f -- distribuicao-windows/
+          git commit -m "build: integra distribuicao Windows ao repositorio"
+          git push origin main
